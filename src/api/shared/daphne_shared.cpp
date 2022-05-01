@@ -19,12 +19,12 @@
 #include <parser/daphnedsl/DaphneDSLParser.h>
 #include "compiler/execution/DaphneIrExecutor.h"
 
+//#include "runtime/local/io/DaphneLibResult.h"
 #include "mlir/ExecutionEngine/ExecutionEngine.h"
 #include "mlir/IR/Builders.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/Pass/PassManager.h"
 #include "llvm/Support/CommandLine.h"
-#include "runtime/local/io/DaphneLibResult.h"
 #ifdef USE_CUDA
     #include <runtime/local/kernels/CUDA/HostUtils.h>
 #endif
@@ -41,7 +41,7 @@
 using namespace std;
 using namespace mlir;
 using namespace llvm::cl;
-
+DaphneLibResult daphne_lib_res;
 void printHelp(const std::string & cmd) {
     cout << "Usage: " << cmd << " FILE [--args {ARG=VAL}] [--vec] [--select-matrix-representations]" <<
      "[--cuda] [--libdir=<path-to-libs>] [--explain] [--no-free]"<< endl;
@@ -68,12 +68,9 @@ extern"C" struct DaphneLibResult getResult()
 extern "C" int
 doMain(char* script_path)
 {
-    daphne_lib_res.vtc = 4;
-    daphne_lib_res.cols = 3;
-    daphne_lib_res.rows = 5;
-    int argc = 2;
+  
     char * argv[] = {"daphne", script_path};
-    
+    int argc = 2;
     // ************************************************************************
     // Parse command line arguments
     // ************************************************************************
@@ -159,7 +156,7 @@ doMain(char* script_path)
     user_config.explain_kernels = explainKernels;
     user_config.libdir = libDir;
     user_config.library_paths.push_back(user_config.libdir + "/libAllKernels.so");
-    
+    user_config.result_struct = &daphne_lib_res;
     if(cuda) {
         int device_count = 0;
 #ifdef USE_CUDA

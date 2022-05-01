@@ -8,4 +8,3 @@ struct DaphneLibResult
     int vtc;
 };
 
-DaphneLibResult daphne_lib_res;

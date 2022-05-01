@@ -95,7 +95,7 @@ if(USE_CUDA AND CMAKE_CUDA_COMPILER)
     cmake_policy(SET CMP0104 NEW)
     add_definitions(-DUSE_CUDA)
     set(CMAKE_CUDA_STANDARD 17)
-    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    set(CMAKE_CUDA_STNDARD_REQUIRED ON)
     message(STATUS "CUDA enabled (version ${CMAKE_CUDA_COMPILER_VERSION})")
 endif()
 

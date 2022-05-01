@@ -25,7 +25,7 @@
 
 #include <cassert>
 #include <cstddef>
-
+#include <sys/time.h>
 // ****************************************************************************
 // Struct for partial template specialization
 // ****************************************************************************
@@ -55,6 +55,9 @@ typename DT::VT aggAll(AggOpCode opCode, const DT * arg, DCTX(ctx)) {
 template<typename VT>
 struct AggAll<DenseMatrix<VT>> {
     static VT apply(AggOpCode opCode, const DenseMatrix<VT> * arg, DCTX(ctx)) {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        unsigned long long time_before = (unsigned long long)(tv.tv_sec)*1000+(unsigned long long)(tv.tv_usec)/1000;
         const size_t numRows = arg->getNumRows();
         const size_t numCols = arg->getNumCols();
         
@@ -70,7 +73,8 @@ struct AggAll<DenseMatrix<VT>> {
                 agg = func(agg, valuesArg[c], ctx);
             valuesArg += arg->getRowSkip();
         }
-
+        unsigned long long time_after =(unsigned long long)(tv.tv_sec)*1000+(unsigned long long)(tv.tv_usec)/1000 - time_before;
+        printf("Time to sum:%lld", time_after);
         return agg;
     }
 };

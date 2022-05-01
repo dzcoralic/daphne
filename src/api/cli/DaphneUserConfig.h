@@ -22,6 +22,8 @@
 #include <memory>
 #include <vector>
 
+#include "runtime/local/io/DaphneLibResult.h"
+
 /*
  * Container to pass around user configuration
  */
@@ -53,4 +55,6 @@ struct DaphneUserConfig {
 #endif
     std::string libdir;
     std::vector<std::string> library_paths;
+
+    DaphneLibResult* result_struct = 0;
 };

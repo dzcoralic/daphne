@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 # -------------------------------------------------------------
@@ -21,16 +22,32 @@
 #
 # -------------------------------------------------------------
 
-
-import sys
-import numpy as np
 import time
-from api.python.context.daphne_context import DaphneContext
+import numpy as np
+import sys 
 
-dim = int(sys.argv[1])
-m1 = np.array(np.random.randint(100, size=dim*dim)+1.01, dtype=np.double)
-m1.shape = (dim, dim)
-daphne_context = DaphneContext()
+
+r=10000
+c=10000
+f=20
+i=1
+X = np.array(np.random.uniform(0.0,1.0, size=[r,f]), dtype=np.double)
+C = np.array(np.random.uniform(0.0,1.0, size=[c,f]), dtype=np.double)
+X.shape = (r, f)
+C.shape = (c, f)
 t = time.time_ns()
-(daphne_context.from_numpy(m1)).sum().print().compute()
+for j in range(0,i):
+    CC = C**2
+    CC = np.sum(CC,axis=0)
+    D = np.add(np.dot(np.matmul(X, np.transpose(C)),-2.0),np.transpose(np.sum(CC)))
+    print(np.matmul(X, np.transpose(C)))
+    minD = np.fmin(D,0)
+    print((minD))
+    P = (D <= minD).astype(int)
+    if(np.sum(P)!=0):
+        P = np.divide(P, np.sum(P))
+
+    P_denom = np.sum(P, axis=1)
+    C = np.divide((np.matmul(np.transpose(P),X)),np.transpose(P_denom))
+print("res: 0") 
 print(time.time_ns()-t)

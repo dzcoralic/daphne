@@ -65,7 +65,7 @@ class OperationNode(DAGNode):
             self._script = DaphneDSLScript(self.daphne_context)
             result = self._script.build_code(self)
             self._script.execute()
-            #self._script.clear(self)
+            self._script.clear(self)
             if self._output_type == OutputType.FRAME:
                 df = pd.read_csv(result)
                 f = open(result+".meta")
@@ -73,13 +73,10 @@ class OperationNode(DAGNode):
                 df.columns=fmd[1+2+int(fmd[1]):]
                 result = df
             if self._output_type == OutputType.MATRIX:  
-                #result = np.genfromtxt(result, delimiter=',')
-               # libDaphneShared = ctypes.CDLL("build/src/api/shared/libDaphneShared.so")
                 libDaphneShared.getResult.restype = DaphneLibResult
                 daphneLibResult = libDaphneShared.getResult()
-                result = np.ctypeslib.as_array(daphneLibResult.address)#, shape=[daphneLibResult.rows,daphneLibResult.cols]) 
-                
-                result = result.astype("float64")
+                result = np.ctypeslib.as_array(ctypes.cast(daphneLibResult.address, ctypes.POINTER(self.getType(daphneLibResult.vtc))), shape=[daphneLibResult.rows,daphneLibResult.cols]) 
+                      
             if result is None:
                 return
             return result
@@ -102,18 +99,18 @@ class OperationNode(DAGNode):
 
     def getType(self, vtc):
         if vtc == F64:
-            return "float64"
+            return ctypes.c_double
         elif vtc == F32:
-            return "float32"
+            return ctypes.c_float
         elif vtc == SI32:
-            return "int32"
+            return ctypes.c_int32
         elif vtc == SI8:
-            return "int8"
+            return ctypes.c_int8
         elif vtc == SI64:
-            return "int64"
+            return ctypes.c_int64
         elif vtc == UI32:
-            return "uint32"
+            return ctypes.c_uint32
         elif vtc == UI8:
-            return "uint8"
+            return ctypes.c_uint8
         elif vtc == UI64:
-            return "uint64"
+            return ctypes.c_uint64

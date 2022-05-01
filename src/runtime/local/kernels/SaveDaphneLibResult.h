@@ -21,7 +21,7 @@
 #include <runtime/local/datastructures/DataObjectFactory.h>
 #include <runtime/local/datastructures/DenseMatrix.h>
 #include <runtime/local/io/FileMetaData.h>
-#include "runtime/local/io/DaphneLibResult.h"
+//#include "runtime/local/io/DaphneLibResult.h"
 
 // ****************************************************************************
 // Struct for partial template specialization
@@ -52,11 +52,13 @@ void saveDaphneLibResult(const DTArg * arg, DCTX(ctx)) {
 template<typename VT>
 struct SaveDaphneLibResult<DenseMatrix<VT>> {
     static void apply(const DenseMatrix<VT> * arg,  DCTX(ctx)) {
+     // printf("%ld\n", getDaphneLibResult());
       arg->increaseRefCounter();
-      daphne_lib_res.address = (void*)arg->getValues();
-      daphne_lib_res.cols = arg->getNumCols();
-      daphne_lib_res.rows = arg->getNumRows();
-      daphne_lib_res.vtc = (int)ValueTypeUtils::codeFor<VT>;
+      ctx->getUserConfig().result_struct->address = (void*)arg->getValues();
+      ctx->getUserConfig().result_struct->cols = arg->getNumCols();
+      ctx->getUserConfig().result_struct->rows = arg->getNumRows();
+      ctx->getUserConfig().result_struct->vtc = (int)ValueTypeUtils::codeFor<VT>;
+    //  printf("%ld\n", getDaphneLibResult());
     }
 };
 

@@ -4,3 +4,5 @@ thirdparty/*
 __pycache__/
 tmpdaphne.daphne
 .gitignore
+test/api/python/benchmarks/*.csv
+
