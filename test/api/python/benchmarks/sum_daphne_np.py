@@ -25,17 +25,16 @@
 import sys
 import numpy as np
 import time
-
-
+from api.python.context.daphne_context import DaphneContext
+ftime = time.time_ns()
+daphne_context = DaphneContext()
 dim = int(sys.argv[1])
-t_gen = time.time_ns()
-m1 = np.array(np.random.randint(100, size=dim*dim)+1.01, dtype=np.double)
-t_gen = time.time_ns()-t_gen
-t = time.time_ns()
+m1 = daphne_context.rand(rows=dim,cols=dim,min=1,max=5,sparsity=0.5,seed=123).compute()
 m1.shape = (dim, dim)
-sum = np.sum(m1)
-print("Time to sum: "+str((time.time_ns()-t)/(10**6)))
-print("res: 0")
+t = time.time_ns()
+print("Time to sum:")
+np.sum(m1)
 print(time.time_ns()-t)
-print("npgen time:")
-print(t_gen)
+
+print("ftime:")
+print(time.time_ns()-t)

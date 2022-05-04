@@ -27,8 +27,8 @@ from api.python.context.daphne_context import DaphneContext
 import sys 
 
 
-r=10000
-c=10000
+r=100000
+c=100000
 f=20
 i=1
 daphne_context = DaphneContext()

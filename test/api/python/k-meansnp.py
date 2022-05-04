@@ -27,8 +27,8 @@ import numpy as np
 import sys 
 
 
-r=10000
-c=10000
+r=100000
+c=100000
 f=20
 i=1
 X = np.array(np.random.uniform(0.0,1.0, size=[r,f]), dtype=np.double)
@@ -37,17 +37,19 @@ X.shape = (r, f)
 C.shape = (c, f)
 t = time.time_ns()
 for j in range(0,i):
-    CC = C**2
+    CC = np.power(C,2)
     CC = np.sum(CC,axis=0)
-    D = np.add(np.dot(np.matmul(X, np.transpose(C)),-2.0),np.transpose(np.sum(CC)))
-    print(np.matmul(X, np.transpose(C)))
+    D = np.add(np.multiply(np.matmul(X, np.transpose(C)),-2.0),np.transpose(np.sum(CC)))
     minD = np.fmin(D,0)
-    print((minD))
+
     P = (D <= minD).astype(int)
     if(np.sum(P)!=0):
         P = np.divide(P, np.sum(P))
 
     P_denom = np.sum(P, axis=1)
-    C = np.divide((np.matmul(np.transpose(P),X)),np.transpose(P_denom))
+
+    pz = np.matmul(np.transpose(P),X)
+    np.seterr(invalid="ignore")
+    C = np.divide((pz),np.transpose(P_denom)[:,np.newaxis])
 print("res: 0") 
 print(time.time_ns()-t)

@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 # -------------------------------------------------------------
@@ -21,21 +22,26 @@
 #
 # -------------------------------------------------------------
 
-
-import sys
-import numpy as np
 import time
+from api.python.context.daphne_context import DaphneContext
+import sys 
 
 
-dim = int(sys.argv[1])
-t_gen = time.time_ns()
-m1 = np.array(np.random.randint(100, size=dim*dim)+1.01, dtype=np.double)
-t_gen = time.time_ns()-t_gen
+r=10000000
+c=100000
+f=20
+i=1
+daphne_context = DaphneContext()
+X = daphne_context.rand(r, f, 0.0, 1.0, 1, -1)
+C = daphne_context.rand(c, f, 0.0, 1.0, 1, -1)
 t = time.time_ns()
-m1.shape = (dim, dim)
-sum = np.sum(m1)
-print("Time to sum: "+str((time.time_ns()-t)/(10**6)))
-print("res: 0")
+for j in range(0,i):
+    D = (X @ C.t()) * -2.0 + (C * C).sum(0).t() 
+    minD = D.aggMin(0)
+    P = D <= minD
+    P = P / P.sum(0)
+    P_denom = P.sum(1)
+    C = (P.t() @ X) / P_denom.t()
+
+C.compute()
 print(time.time_ns()-t)
-print("npgen time:")
-print(t_gen)

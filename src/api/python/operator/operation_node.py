@@ -21,6 +21,7 @@
 import ctypes
 from typing import Dict, Iterable, Optional, Sequence, Union, TYPE_CHECKING
 from api.python.script_building.dag import DAGNode, OutputType
+import time
 from api.python.script_building.script import DaphneDSLScript
 from api.python.utils.consts import BINARY_OPERATIONS, F32, F64, SI32, SI64, SI8, UI32, UI64, UI8, VALID_INPUT_TYPES, DaphneLibResult, libDaphneShared
 from api.python.utils.helpers import create_params_string
@@ -75,8 +76,10 @@ class OperationNode(DAGNode):
             if self._output_type == OutputType.MATRIX:  
                 libDaphneShared.getResult.restype = DaphneLibResult
                 daphneLibResult = libDaphneShared.getResult()
+                np_time = time.time()
                 result = np.ctypeslib.as_array(ctypes.cast(daphneLibResult.address, ctypes.POINTER(self.getType(daphneLibResult.vtc))), shape=[daphneLibResult.rows,daphneLibResult.cols]) 
-                      
+                print("npgen time:")
+                print(time.time() - np_time)
             if result is None:
                 return
             return result
