@@ -26,7 +26,7 @@ import sys
 import numpy as np
 import time
 
-
+ftime = time.time_ns()
 dim = int(sys.argv[1])
 t_gen = time.time_ns()
 m1 = np.array(np.random.randint(100, size=dim*dim)+1.01, dtype=np.double)
@@ -34,8 +34,11 @@ t_gen = time.time_ns()-t_gen
 t = time.time_ns()
 m1.shape = (dim, dim)
 sum = np.sum(m1)
-print("Time to sum: "+str((time.time_ns()-t)/(10**6)))
+print("Time to sum: ")
+print((time.time_ns()-t))
 print("res: 0")
 print(time.time_ns()-t)
 print("npgen time:")
 print(t_gen)
+print("ftime:")
+print(time.time_ns()-ftime)

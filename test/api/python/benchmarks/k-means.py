@@ -28,7 +28,7 @@ import sys
 
 
 r=100000
-c=100000
+c=1000
 f=20
 i=1
 daphne_context = DaphneContext()

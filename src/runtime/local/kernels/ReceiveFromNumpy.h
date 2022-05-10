@@ -32,7 +32,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <chrono>
-
+#include <sys/time.h>
 
 // ****************************************************************************
 // Struct for partial template specialization
@@ -78,7 +78,15 @@ struct NoOpDeleter {
 template<typename VT>
 struct ReceiveFromNumpy<DenseMatrix<VT>> {
     static void apply(DenseMatrix<VT> *& res, int64_t upper, int64_t lower, int64_t rows, int64_t cols, DCTX(ctx)) {
+    
+        struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
         res = DataObjectFactory::create<DenseMatrix<VT>>(rows, cols, std::shared_ptr<VT[]>((VT*)((upper<<32)|lower), NoOpDeleter()));
+        
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        printf("Time to gen data:\n%lld\n", (time_after-time_before));
     }
 };
 

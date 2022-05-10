@@ -23,6 +23,7 @@
 #include <runtime/local/io/File.h>
 #include <runtime/local/io/FileMetaData.h>
 #include <runtime/local/io/WriteCsv.h>
+#include <sys/time.h>
 
 // ****************************************************************************
 // Struct for partial template specialization
@@ -52,11 +53,19 @@ void write(const DTArg * arg, const char * filename, DCTX(ctx)) {
 
 template<typename VT>
 struct Write<DenseMatrix<VT>> {
+
     static void apply(const DenseMatrix<VT> * arg, const char * filename, DCTX(ctx)) {
+        struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
         File * file = openFileForWrite(filename);
         FileMetaData::toFile(filename, arg->getNumRows(), arg->getNumCols(), 1, ValueTypeUtils::codeFor<VT>);
         writeCsv(arg, file);
         closeFile(file);
+        
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        printf("Time to write data:%lld\n", (time_after-time_before));
     }
 };
 

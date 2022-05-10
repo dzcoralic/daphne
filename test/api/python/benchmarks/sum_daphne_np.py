@@ -37,4 +37,4 @@ np.sum(m1)
 print(time.time_ns()-t)
 
 print("ftime:")
-print(time.time_ns()-t)
+print(time.time_ns()-ftime)

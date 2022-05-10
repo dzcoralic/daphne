@@ -24,6 +24,7 @@
 #include <runtime/local/io/File.h>
 #include <runtime/local/io/FileMetaData.h>
 #include <runtime/local/io/ReadCsv.h>
+#include <sys/time.h>
 
 // ****************************************************************************
 // Struct for partial template specialization
@@ -54,6 +55,9 @@ void read(DTRes *& res, const char * filename, DCTX(ctx)) {
 template<typename VT>
 struct Read<DenseMatrix<VT>> {
     static void apply(DenseMatrix<VT> *& res, const char * filename, DCTX(ctx)) {
+        struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
         FileMetaData fmd = FileMetaData::ofFile(filename);
         
         if(res == nullptr)
@@ -64,6 +68,9 @@ struct Read<DenseMatrix<VT>> {
         File * file = openFile(filename);
         readCsv(res, file, fmd.numRows, fmd.numCols, ',');
         closeFile(file);
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        printf("Time to gen data:\n%lld\n", (time_after-time_before));
     }
 };
 

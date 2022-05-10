@@ -1,8 +1,8 @@
 msec_factor = as.f32(0.000001);
 
 // K-means clustering.
-r=10000000;
-c=100000;
+r=1000000;
+c=1000;
 f=20;
 i=1;
 // Arguments:
@@ -28,4 +28,4 @@ for(i in 1:i) {
 // Result output.
 //print(C);
 t_end = now();
-print("Time input read:  ",0);print(as.f32((t_end - t_start)) * msec_factor,0);print(" ms");
+print("Time input read:  \n",0);print(as.f32((t_end - t_start)) * msec_factor,0);
