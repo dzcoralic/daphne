@@ -56,6 +56,9 @@ void ewBinaryMat(BinaryOpCode opCode, DTRes *& res, const DTLhs * lhs, const DTR
 template<typename VTres, typename VTlhs, typename VTrhs>
 struct EwBinaryMat<DenseMatrix<VTres>, DenseMatrix<VTlhs>, DenseMatrix<VTrhs>> {
     static void apply(BinaryOpCode opCode, DenseMatrix<VTres> *& res, const DenseMatrix<VTlhs> * lhs, const DenseMatrix<VTrhs> * rhs, DCTX(ctx)) {
+        struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
         const size_t numRowsLhs = lhs->getNumRows();
         const size_t numColsLhs = lhs->getNumCols();
         const size_t numRowsRhs = rhs->getNumRows();
@@ -108,6 +111,10 @@ struct EwBinaryMat<DenseMatrix<VTres>, DenseMatrix<VTlhs>, DenseMatrix<VTrhs>> {
         }
 //        auto end = std::chrono::high_resolution_clock::now();
 //        std::cout << "EwBinaryMat time=" << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "µs)" << std::endl;
+
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+     //   printf("Time to add:\n%lld\n", (time_after-time_before));
     }
 };
 

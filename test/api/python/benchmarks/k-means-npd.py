@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 # -------------------------------------------------------------
@@ -21,14 +22,31 @@
 #
 # -------------------------------------------------------------
 
+from re import M
 import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
+import numpy as np
 
-
+r=10000 # and 1000000 # number of records (rows in X)
+c=5                    # number of centroids (rows in C)
+f=1000                 # number of features (columns in X and C)
+i=20                   # number of iterations
 daphne_context = DaphneContext()
-dim = int(sys.argv[1])
-m1 = daphne_context.rand(rows=dim,cols=dim,min=1.0,max=5.0,sparsity=0.5,seed=123)
+m1 = np.genfromtxt("mat1.csv", delimiter=",")
+m2 = np.genfromtxt("mat2.csv", delimiter=",")
+m1.shape = (r, f)
+m2.shape = (c, f)
+X = daphne_context.from_numpy_ctypes(m1)
+C = daphne_context.from_numpy_ctypes(m2)
 t = time.time_ns()
-(m1+m1).sum().print().compute()
+for j in range(0,i):
+    D = (X @ C.t()) * -2.0 + (C * C).sum(0).t() 
+    minD = D.aggMin(0)
+    P = D <= minD
+    P = P / P.sum(0)
+    P_denom = P.sum(1)
+    C = (P.t() @ X) / P_denom.t()
+
+C.compute()
 print(time.time_ns()-t)

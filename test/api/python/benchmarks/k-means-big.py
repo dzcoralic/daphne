@@ -27,13 +27,13 @@ from api.python.context.daphne_context import DaphneContext
 import sys 
 
 
-r=100
-c=100			    
-f=20
-i=1
+r=1000000 # and 1000000 # number of records (rows in X)
+c=5                    # number of centroids (rows in C)
+f=1000                 # number of features (columns in X and C)
+i=20                   # number of iterations
 daphne_context = DaphneContext()
-X = daphne_context.rand(r, f, 0.0, 1.0, 1, -1)
-C = daphne_context.rand(c, f, 0.0, 1.0, 1, -1)
+X = daphne_context.getData("mat1_k.csv")
+C = daphne_context.getData("mat2_k.csv")
 t = time.time_ns()
 for j in range(0,i):
     D = (X @ C.t()) * -2.0 + (C * C).sum(0).t() 

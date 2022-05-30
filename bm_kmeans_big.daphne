@@ -1,8 +1,6 @@
-msec_factor = as.f32(0.000001);
-
 // K-means clustering.
-r=1000000;
-c=1000;
+r=10;
+c=10;
 f=20;
 i=1;
 // Arguments:
@@ -12,8 +10,8 @@ i=1;
 // - i ... number of iterations
 
 // Data generation.
-X = rand(r, f, 0.0, 1.0, 1, -1);
-C = rand(c, f, 0.0, 1.0, 1, -1);
+X = readMatrix("test/api/python/benchmarks/mat1_k.py");
+C = readMatrix("test/api/python/benchmarks/mat2_k.py");
 t_start = now();
 // K-means clustering (decisive part).
 for(i in 1:i) {
@@ -28,4 +26,4 @@ for(i in 1:i) {
 // Result output.
 //print(C);
 t_end = now();
-print("Time input read:  \n",0);print(as.f32((t_end - t_start)) * msec_factor,0);
+print("Time input read:  \n",0);print(as.f32((t_end - t_start)),0);

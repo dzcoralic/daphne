@@ -30,9 +30,14 @@ ftime = time.time_ns()
 dim = int(sys.argv[1])
 t_gen = time.time_ns()
 m1 = np.array(np.random.randint(100, size=dim*dim)+1.01, dtype=np.double)
+m1.shape = (dim, dim)
 t_gen = time.time_ns()-t_gen
 t = time.time_ns()
-m1.shape = (dim, dim)
+m1 = m1+m1
+print("Time to add:")
+print(time.time_ns()-t)
+t = time.time_ns()
+
 sum = np.sum(m1)
 print("Time to sum: ")
 print((time.time_ns()-t))

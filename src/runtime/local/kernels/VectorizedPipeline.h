@@ -37,7 +37,10 @@ struct VectorizedPipeline {
     static void apply(DTRes *&resIn, bool* isScalar, Structure **inputs, size_t numInputs, size_t numOutputs, int64_t *outRows,
             int64_t *outCols, int64_t *splits, int64_t *combines, size_t numFuncs, void** fun, DCTX(ctx)) {
         assert(numOutputs == 1 && "FIXME: lowered to wrong kernel");
-
+        struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        
         auto wrapper = std::make_unique<MTWrapper<DTRes>>(0, numFuncs, ctx);
 
         std::vector<std::function<void(DTRes ***, Structure **, DCTX(ctx))>> funcs;
@@ -55,6 +58,10 @@ struct VectorizedPipeline {
             wrapper->executeQueuePerDeviceType(funcs, res, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
                     reinterpret_cast<VectorSplit *>(splits), reinterpret_cast<VectorCombine *>(combines), ctx, false);
         }
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        printf("Time to add:\n%lld\n", (time_after-time_before));
+    
     }
 };
 
@@ -74,7 +81,10 @@ template<class DTRes>
 void vectorizedPipeline(DTRes *&res1, DTRes *&res2, bool* isScalar, Structure **inputs, size_t numInputs, size_t numOutputs,
         int64_t *outRows, int64_t *outCols, int64_t *splits, int64_t *combines, size_t numFuncs, void** fun, DCTX(ctx)){
     assert(numOutputs == 2 && "FIXME: lowered to wrong kernel");
-
+    struct timespec tv;
+    clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+    uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+       
     auto wrapper = std::make_unique<MTWrapper<DTRes>>(0, numFuncs, ctx);
 
     std::vector<std::function<void(DTRes ***, Structure **, DCTX(ctx))>> funcs;
@@ -95,4 +105,8 @@ void vectorizedPipeline(DTRes *&res1, DTRes *&res2, bool* isScalar, Structure **
         wrapper->executeQueuePerDeviceType(funcs, res, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
                 reinterpret_cast<VectorSplit *>(splits), reinterpret_cast<VectorCombine *>(combines), ctx, false);
     }
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        printf("Time to add:\n%lld\n", (time_after-time_before));
+    
 }

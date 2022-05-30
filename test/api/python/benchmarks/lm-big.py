@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 # -------------------------------------------------------------
@@ -25,10 +26,19 @@ import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
 
-
-daphne_context = DaphneContext()
-dim = int(sys.argv[1])
-m1 = daphne_context.rand(rows=dim,cols=dim,min=1.0,max=5.0,sparsity=0.5,seed=123)
 t = time.time_ns()
-(m1+m1).sum().print().compute()
+r=1000000 # and 1000000
+c=1000                 
+daphne_context = DaphneContext()
+#XY = daphne_context.rand(r, f, 0.0, 1.0, 1, 1)
+XY =  daphne_context.getData("mat1_k.csv")
+X = XY['',daphne_context.seq(0,c-2,1)]
+y = XY['',daphne_context.fill(c-1,1,1)]
+X = (X-X.mean(1))/X.stddev(1)
+X = daphne_context.cbind(X, daphne_context.fill(1.0, X.nrow(),1))
+lmbda = daphne_context.fill(0.001, X.ncol(),1)
+A = (X.t() @ X) + lmbda.diagMatrix()
+b = X.t() @ y
+beta = A.solve(b)
+beta.print().compute()
 print(time.time_ns()-t)

@@ -59,6 +59,10 @@ void ewBinaryObjSca(BinaryOpCode opCode, DTRes *& res, const DTLhs * lhs, VTRhs 
 template<typename VT>
 struct EwBinaryObjSca<DenseMatrix<VT>, DenseMatrix<VT>, VT> {
     static void apply(BinaryOpCode opCode, DenseMatrix<VT> *& res, const DenseMatrix<VT> * lhs, VT rhs, DCTX(ctx)) {
+        //todo time measurement
+        struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
         const size_t numRows = lhs->getNumRows();
         const size_t numCols = lhs->getNumCols();
         
@@ -76,6 +80,9 @@ struct EwBinaryObjSca<DenseMatrix<VT>, DenseMatrix<VT>, VT> {
             valuesLhs += lhs->getRowSkip();
             valuesRes += res->getRowSkip();
         }
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+      //  printf("Time to add:\n%lld\n", (time_after-time_before));
     }
 };
 

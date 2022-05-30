@@ -21,14 +21,24 @@
 #
 # -------------------------------------------------------------
 
+
+import sys
+import numpy as np
 import time
 from api.python.context.daphne_context import DaphneContext
-import sys 
-
-
+ftime = time.time_ns()
 daphne_context = DaphneContext()
 dim = int(sys.argv[1])
-m1 = daphne_context.rand(rows=dim,cols=dim,min=1.0,max=5.0,sparsity=0.5,seed=123)
+m1 = daphne_context.rand(rows=dim,cols=dim,min=1,max=5,sparsity=0.5,seed=123).compute(type="files")
+m1.shape = (dim, dim)
 t = time.time_ns()
-(m1+m1).sum().print().compute()
+m1 = m1+m1
+print("Time to add:")
 print(time.time_ns()-t)
+t = time.time_ns()
+print("Time to sum:")
+np.sum(m1)
+print(time.time_ns()-t)
+
+print("ftime:")
+print(time.time_ns()-ftime)

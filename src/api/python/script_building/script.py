@@ -41,13 +41,14 @@ class DaphneDSLScript:
         self.out_var_name = []
         self._variable_counter = 0
     
-    def build_code(self, dag_root: DAGNode):
+    def build_code(self, dag_root: DAGNode, type="ctypes"):
         baseOutVarString = self._dfs_dag_nodes(dag_root)
         if dag_root._output_type != OutputType.NONE:
             self.out_var_name.append(baseOutVarString)
             if(dag_root.output_type == OutputType.MATRIX):
-               # self.add_code(f'writeMatrix({baseOutVarString},"{TMP_PATH}/{baseOutVarString}.csv");')
-                #return TMP_PATH+"/" + baseOutVarString+ ".csv"
+                if type == "files":
+                    self.add_code(f'writeMatrix({baseOutVarString},"{TMP_PATH}/{baseOutVarString}.csv");')
+                    return TMP_PATH+"/" + baseOutVarString+ ".csv"
                 self.add_code(f'saveDaphneLibResult({baseOutVarString});')
                 return None
             elif(dag_root.output_type == OutputType.FRAME):
@@ -140,11 +141,14 @@ class DaphneDSLScript:
     def _dfs_clear_dag_nodes(self, dag_node:VALID_INPUT_TYPES)->str:
         if not isinstance(dag_node, DAGNode):
             return
+        if not dag_node._daphnedsl_name:
+            return
         dag_node._daphnedsl_name = ""
         for n in dag_node.unnamed_input_nodes:
             self._dfs_clear_dag_nodes(n)
-        if(isinstance(dag_node.named_input_nodes, dict)):
-            for name,n in dag_node.named_input_nodes.items():
+        if not dag_node.named_input_nodes:
+            return
+        for name,n in dag_node._named_input_nodes.items():
                 self._dfs_clear_dag_nodes(n)
         if dag_node._source_node is not None:
             self._dfs_clear_dag_nodes(dag_node._source_node)

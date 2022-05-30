@@ -47,6 +47,13 @@ class DaphneContext(object):
         named_params = []
         return Matrix(self, 'readMatrix', unnamed_params, named_params, local_data=mat)
     
+    def getData(self, file) -> Matrix:
+   
+        
+        unnamed_params = ['\"test/api/python/benchmarks/'+file+'\"']
+
+        return Matrix(self, 'readMatrix', unnamed_params)
+    
     def from_numpy_ctypes(self, mat: np.array) -> Matrix:
         """Generate DAGNode representing matrix with data given by a numpy array.
         :param mat: the numpy array
@@ -94,6 +101,16 @@ class DaphneContext(object):
         unnamed_params.extend(args)
         named_params = []
         return Frame(self, 'readFrame', unnamed_params, named_params, local_data=df)
+    
+    def fill(self, arg, rows:int, cols:int) -> 'Matrix':
+        named_input_nodes = {'arg':arg, 'rows':rows, 'cols':cols}
+        return Matrix(self, 'fill', [], named_input_nodes=named_input_nodes)
+    def seq(self, start, end, inc) -> 'Matrix':
+        named_input_nodes = {'start':start, 'end':end, 'inc':inc}
+        return Matrix(self, 'seq', [], named_input_nodes=named_input_nodes)
+
+    def cbind(self, x, y) -> 'Matrix':
+        return Matrix(self, 'cbind', [x,y])
 
     def rand(self, rows: int, cols: int,
             min: Union[float, int] = None, max: Union[float, int] = None,sparsity: Union[float, int] = 0, seed: Union[float, int] = 0

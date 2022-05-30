@@ -85,11 +85,11 @@ class Matrix(OperationNode):
     def _is_numpy(self) -> bool:
         return self._np_array is not None
     
-    def compute(self) -> Union[np.array]:
+    def compute(self,type="ctypes") -> Union[np.array]:
         if self._is_numpy():
             return self._np_array
         else:
-            return super().compute()
+            return super().compute(type)
 
     def __add__(self, other: VALID_ARITHMETIC_TYPES) -> 'Matrix':
         return Matrix(self.daphne_context, '+', [self, other])
@@ -142,6 +142,11 @@ class Matrix(OperationNode):
     def __matmul__(self, other: 'Matrix') -> 'Matrix':
         return Matrix(self.daphne_context, '@', [self, other])
 
+    def __getitem__(self,  pos):
+        i,x = pos
+        if x is not None:
+            return Matrix(self.daphne_context,'',[self, i, x], brackets=True)
+        return Matrix(self.daphne_context,'',[self, i], brackets=True)
 
     def sum(self, axis: int = None) -> 'OperationNode':
         """Calculate sum of matrix.
@@ -161,7 +166,25 @@ class Matrix(OperationNode):
     def aggMin(self, axis: int = None) -> 'OperationNode':
         
         return Matrix(self.daphne_context, 'aggMin', [self, axis])
+
+    def mean(self, axis: int = None) -> 'OperationNode':
+        return Matrix(self.daphne_context, 'mean', [self, axis])
+
+    def stddev(self, axis: int = None) -> 'OperationNode':
+        return Matrix(self.daphne_context, 'stddev', [self, axis])
     
+    def ncol(self) -> 'OperationNode':
+        return Matrix(self.daphne_context, 'ncol', [self])
+
+    def nrow(self) -> 'OperationNode':
+        return Matrix(self.daphne_context, 'nrow', [self])
+
+    def diagMatrix(self) -> 'OperationNode':
+        return Matrix(self.daphne_context, 'diagMatrix', [self])
+    
+    def solve(self, other: 'Matrix') -> 'Matrix':
+        return Matrix(self.daphne_context, 'solve', [self, other])
+
     def t(self) -> 'OperationNode':
       
         return Matrix(self.daphne_context, 't', [self])

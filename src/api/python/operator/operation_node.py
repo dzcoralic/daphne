@@ -61,10 +61,10 @@ class OperationNode(DAGNode):
         self._brackets = brackets
         self._output_type = output_type
 
-    def compute(self):
+    def compute(self, type="ctypes"):
         if self._result_var is None:
             self._script = DaphneDSLScript(self.daphne_context)
-            result = self._script.build_code(self)
+            result = self._script.build_code(self, type)
             self._script.execute()
             self._script.clear(self)
             if self._output_type == OutputType.FRAME:
@@ -73,13 +73,19 @@ class OperationNode(DAGNode):
                 fmd = f.read().split(",")
                 df.columns=fmd[1+2+int(fmd[1]):]
                 result = df
-            if self._output_type == OutputType.MATRIX:  
+            if self._output_type == OutputType.MATRIX and type=="ctypes":  
                 libDaphneShared.getResult.restype = DaphneLibResult
                 daphneLibResult = libDaphneShared.getResult()
-                np_time = time.time()
+                np_time = time.time_ns()
                 result = np.ctypeslib.as_array(ctypes.cast(daphneLibResult.address, ctypes.POINTER(self.getType(daphneLibResult.vtc))), shape=[daphneLibResult.rows,daphneLibResult.cols]) 
                 print("npgen time:")
-                print(time.time() - np_time)
+                print(time.time_ns() - np_time)
+            if self._output_type == OutputType.MATRIX and type=="files":
+                np_time = time.time_ns()
+                arr = np.genfromtxt(result, delimiter=',')
+                print("npgen time:")
+                print(time.time_ns() - np_time)
+                return arr
             if result is None:
                 return
             return result
@@ -87,7 +93,7 @@ class OperationNode(DAGNode):
 
     def code_line(self, var_name: str, unnamed_input_vars: Sequence[str], named_input_vars: Dict[str, str])->str:
         if self._brackets:
-            return f'{var_name}={unnamed_input_vars[0]}[{",".join(unnamed_input_vars[1:])}]'
+            return f'{var_name}={unnamed_input_vars[0]}[{",".join(unnamed_input_vars[1:])}];'
         if self.operation in BINARY_OPERATIONS:
             assert len(
                 named_input_vars) == 0, 'named parameters can not be used with binary operations'

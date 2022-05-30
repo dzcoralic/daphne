@@ -31,6 +31,11 @@ daphne_context = DaphneContext()
 dim = int(sys.argv[1])
 m1 = daphne_context.rand(rows=dim,cols=dim,min=1,max=5,sparsity=0.5,seed=123).compute()
 m1.shape = (dim, dim)
+
+t = time.time_ns()
+m1 = m1+m1
+print("Time to add:")
+print(time.time_ns()-t)
 t = time.time_ns()
 print("Time to sum:")
 np.sum(m1)
