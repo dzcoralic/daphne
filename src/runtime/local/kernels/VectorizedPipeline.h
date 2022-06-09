@@ -34,12 +34,12 @@ using mlir::daphne::VectorCombine;
 
 template<class DTRes>
 struct VectorizedPipeline {
-    static void apply(DTRes *&resIn, bool* isScalar, Structure **inputs, size_t numInputs, size_t numOutputs, int64_t *outRows,
+    static void apply(DTRes ** outputs, size_t numOutputs, bool* isScalar, Structure **inputs, size_t numInputs, int64_t *outRows,
             int64_t *outCols, int64_t *splits, int64_t *combines, size_t numFuncs, void** fun, DCTX(ctx)) {
-        assert(numOutputs == 1 && "FIXME: lowered to wrong kernel");
         struct timespec tv;
         clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
         uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        
         
         auto wrapper = std::make_unique<MTWrapper<DTRes>>(0, numFuncs, ctx);
 
@@ -49,18 +49,24 @@ struct VectorizedPipeline {
                     reinterpret_cast<void (*)(DTRes ***, Structure **, DCTX(ctx))>(reinterpret_cast<void*>(fun[i]))));
         }
 
-        DTRes **res[] = {&resIn};
+        // TODO Do we really need *** here, isn't ** enough?
+        DTRes *** outputs2 = new DTRes**[numOutputs];
+        for(size_t i = 0; i < numOutputs; i++)
+            outputs2[i] = outputs + i;
+        
         if(ctx->getUserConfig().vectorized_single_queue || numFuncs == 1) {
-            wrapper->executeSingleQueue(funcs, res, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
+            wrapper->executeSingleQueue(funcs, outputs2, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
                     reinterpret_cast<VectorSplit *>(splits), reinterpret_cast<VectorCombine *>(combines), ctx, false);
         }
         else {
-            wrapper->executeQueuePerDeviceType(funcs, res, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
+            wrapper->executeQueuePerDeviceType(funcs, outputs2, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
                     reinterpret_cast<VectorSplit *>(splits), reinterpret_cast<VectorCombine *>(combines), ctx, false);
         }
+        
+        delete[] outputs2;
         clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
         uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
-        printf("Time to add:\n%lld\n", (time_after-time_before));
+        printf("Time to vectorized operation:\n%lld\n", (time_after-time_before));
     
     }
 };
@@ -70,43 +76,14 @@ struct VectorizedPipeline {
 // ****************************************************************************
 
 template<class DTRes>
-void vectorizedPipeline(DTRes *&res, bool* isScalar, Structure **inputs, size_t numInputs, size_t numOutputs, int64_t *outRows,
+void vectorizedPipeline(DTRes ** outputs, size_t numOutputs, bool* isScalar, Structure **inputs, size_t numInputs, int64_t *outRows,
         int64_t *outCols, int64_t *splits, int64_t *combines, size_t numFuncs, void** fun, DCTX(ctx)) {
-    VectorizedPipeline<DTRes>::apply(res, isScalar, inputs, numInputs, numOutputs, outRows, outCols, splits, combines, numFuncs,
-        fun, ctx);
-}
-
-// TODO: use variable args
-template<class DTRes>
-void vectorizedPipeline(DTRes *&res1, DTRes *&res2, bool* isScalar, Structure **inputs, size_t numInputs, size_t numOutputs,
-        int64_t *outRows, int64_t *outCols, int64_t *splits, int64_t *combines, size_t numFuncs, void** fun, DCTX(ctx)){
-    assert(numOutputs == 2 && "FIXME: lowered to wrong kernel");
-    struct timespec tv;
-    clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
-    uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
-       
-    auto wrapper = std::make_unique<MTWrapper<DTRes>>(0, numFuncs, ctx);
-
-    std::vector<std::function<void(DTRes ***, Structure **, DCTX(ctx))>> funcs;
-    for (auto i = 0ul; i < numFuncs; ++i) {
-        funcs.emplace_back(std::function<void(DTRes ***, Structure **, DCTX(ctx))>(reinterpret_cast<void (*)(DTRes ***,
-                Structure **, DCTX(ctx))>(reinterpret_cast<void*>(fun[i]))));
-    }
-
-//    DTRes **res[] = {&res1, &res2};
-    DTRes*** res = new DTRes**[2];
-    res[0] = &res1;
-    res[1] = &res2;
-    if(ctx->getUserConfig().vectorized_single_queue || numFuncs == 1) {
-        wrapper->executeSingleQueue(funcs, res, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
-                reinterpret_cast<VectorSplit *>(splits), reinterpret_cast<VectorCombine *>(combines), ctx, false);
-    }
-    else {
-        wrapper->executeQueuePerDeviceType(funcs, res, isScalar, inputs, numInputs, numOutputs, outRows, outCols,
-                reinterpret_cast<VectorSplit *>(splits), reinterpret_cast<VectorCombine *>(combines), ctx, false);
-    }
-        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
-        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
-        printf("Time to add:\n%lld\n", (time_after-time_before));
-    
+    VectorizedPipeline<DTRes>::apply(
+            outputs, numOutputs,
+            isScalar, inputs, numInputs,
+            outRows, outCols,
+            splits, combines,
+            numFuncs, fun,
+            ctx
+    );
 }

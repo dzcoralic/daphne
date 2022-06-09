@@ -25,6 +25,29 @@
 #include <runtime/local/io/FileMetaData.h>
 #include <runtime/local/io/ReadCsv.h>
 #include <sys/time.h>
+#include <runtime/local/io/ReadMM.h>
+#include <runtime/local/io/ReadParquet.h>
+#include <runtime/local/io/ReadDaphne.h>
+
+#include <string>
+#include <regex>
+#include <map>
+
+struct FileExt {
+	static std::map<std::string, int> create_map() {
+	std::map<std::string, int> m;
+		m["csv"] = 0;
+		m["mtx"] = 1;
+		m["parquet"] = 2;
+		m["dbdf"] = 3;
+		return m;
+	}
+	static const std::map<std::string, int> map;
+};
+
+inline const std::map<std::string, int> FileExt::map = FileExt::create_map();
+
+int extValue(const char * filename);
 
 // ****************************************************************************
 // Struct for partial template specialization
@@ -58,17 +81,38 @@ struct Read<DenseMatrix<VT>> {
         struct timespec tv;
         clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
         uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
-        FileMetaData fmd = FileMetaData::ofFile(filename);
         
-        if(res == nullptr)
-            res = DataObjectFactory::create<DenseMatrix<VT>>(
-                    fmd.numRows, fmd.numCols, false
-            );
         
-        File * file = openFile(filename);
-        readCsv(res, file, fmd.numRows, fmd.numCols, ',');
-        closeFile(file);
-        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+
+	FileMetaData fmd = FileMetaData::ofFile(filename);
+	int extv = extValue(filename);
+	switch(extv) {
+	case 0:
+		if(res == nullptr)
+			res = DataObjectFactory::create<DenseMatrix<VT>>(
+				fmd.numRows, fmd.numCols, false
+			);
+		readCsv(res, filename, fmd.numRows, fmd.numCols, ',');
+		break;
+	case 1:
+		readMM(res, filename);
+		break;
+#ifdef USE_ARROW
+	case 2:
+		if(res == nullptr)
+			res = DataObjectFactory::create<DenseMatrix<VT>>(
+				fmd.numRows, fmd.numCols, false
+			);
+		readParquet(res, filename, fmd.numRows, fmd.numCols);
+		break;
+#endif
+	case 3:
+		readDaphne(res, filename);
+                break;
+        default:
+            throw std::runtime_error("File extension not supported");
+	}
+	clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
         uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
         printf("Time to read data:\n%lld\n", (time_after-time_before));
     }
@@ -81,19 +125,40 @@ struct Read<DenseMatrix<VT>> {
 template<typename VT>
 struct Read<CSRMatrix<VT>> {
     static void apply(CSRMatrix<VT> *& res, const char * filename, DCTX(ctx)) {
-        FileMetaData fmd = FileMetaData::ofFile(filename);
 
-        assert(fmd.numNonZeros != -1
-            && "Currently reading of sparse matrices requires a number of non zeros to be defined");
+	FileMetaData fmd = FileMetaData::ofFile(filename);
+	int extv = extValue(filename);
+	switch(extv) {
+	case 0:
+		if(fmd.numNonZeros == -1)
+                    throw std::runtime_error("Currently reading of sparse matrices requires a number of non zeros to be defined");
 
-        if(res == nullptr)
-            res = DataObjectFactory::create<CSRMatrix<VT>>(
-                fmd.numRows, fmd.numCols, fmd.numNonZeros, false
-            );
-        File * file = openFile(filename);
-        // FIXME: ensure file is sorted, or set `sorted` argument correctly
-        readCsv(res, file, fmd.numRows, fmd.numCols, ',', fmd.numNonZeros, true);
-        closeFile(file);
+		if(res == nullptr)
+			res = DataObjectFactory::create<CSRMatrix<VT>>(
+				fmd.numRows, fmd.numCols, fmd.numNonZeros, false
+			);
+
+		// FIXME: ensure file is sorted, or set `sorted` argument correctly
+		readCsv(res, filename, fmd.numRows, fmd.numCols, ',', fmd.numNonZeros, true);
+		break;
+	case 1:
+		readMM(res, filename);
+		break;
+#ifdef USE_ARROW
+	case 2:
+		if(res == nullptr)
+			res = DataObjectFactory::create<CSRMatrix<VT>>(
+				fmd.numRows, fmd.numCols, fmd.numNonZeros, false
+			);
+		readParquet(res, filename,fmd.numRows, fmd.numCols,fmd.numNonZeros, false);
+		break;
+#endif
+	case 3:
+		readDaphne(res, filename);
+                break;
+        default:
+            throw std::runtime_error("File extension not supported");
+	}
     }
 };
 
@@ -126,13 +191,25 @@ struct Read<Frame> {
                     fmd.numRows, fmd.numCols, schema, labels, false
             );
         
-        File * file = openFile(filename);
-        readCsv(res, file, fmd.numRows, fmd.numCols, ',', schema);
-        closeFile(file);
+        readCsv(res, filename, fmd.numRows, fmd.numCols, ',', schema);
         
         if(fmd.isSingleValueType)
             delete[] schema;
     }
 };
+
+
+inline int extValue(const char * filename) {
+	int extv;
+	std::string fn(filename);
+	auto pos = fn.find_last_of('.');
+	std::string ext(fn.substr(pos+1)) ;
+	if (FileExt::map.count(ext) > 0) {
+		extv = FileExt::map.find(ext)->second;
+	} else {
+		extv = -1;
+	}
+	return extv;
+}
 
 #endif //SRC_RUNTIME_LOCAL_KERNELS_READ_H

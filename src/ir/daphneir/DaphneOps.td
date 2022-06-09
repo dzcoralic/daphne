@@ -72,6 +72,11 @@ def Daphne_FillOp : Daphne_Op<"fill", [
     let results = (outs Matrix:$res);
 }
 
+def Daphne_MatrixConstantOp : Daphne_Op<"matrixConstant">{
+    let arguments = (ins UI64:$matrixAddr);
+    let results = (outs Matrix:$res);
+}
+
 def Daphne_CreateFrameOp : Daphne_Op<"createFrame", [
     SameVariadicOperandSize,
     DeclareOpInterfaceMethods<InferFrameLabelsOpInterface>,
@@ -83,7 +88,8 @@ def Daphne_CreateFrameOp : Daphne_Op<"createFrame", [
 }
 
 def Daphne_DiagMatrixOp : Daphne_Op<"diagMatrix", [
-    NumRowsFromArg, NumColsFromArgNumRows
+    NumRowsFromArg, NumColsFromArgNumRows,
+    DeclareOpInterfaceMethods<InferSparsityOpInterface>
 ]> {
     let arguments = (ins Matrix:$arg);
     let results = (outs Matrix:$res);
@@ -221,7 +227,9 @@ class Daphne_EwBinaryOp<string name, Type scalarType, list<OpTrait> traits = []>
 // Arithmetic
 // ----------------------------------------------------------------------------
 
-def Daphne_EwAddOp    : Daphne_EwBinaryOp<"ewAdd", NumScalar, [Commutative, EwSparseIfBoth, CUDASupport]>;
+def Daphne_EwAddOp    : Daphne_EwBinaryOp<"ewAdd", NumScalar, [Commutative, EwSparseIfBoth, CUDASupport]> {
+    let hasCanonicalizeMethod = 1;
+}
 def Daphne_EwSubOp    : Daphne_EwBinaryOp<"ewSub", NumScalar, [EwSparseIfBoth, CUDASupport]>;
 def Daphne_EwMulOp    : Daphne_EwBinaryOp<"ewMul", NumScalar, [Commutative, EwSparseIfEither]>;
 def Daphne_EwDivOp    : Daphne_EwBinaryOp<"ewDiv", NumScalar, [CUDASupport]>;
@@ -255,7 +263,7 @@ def Daphne_EwConcatOp : Daphne_EwBinaryOp<"ewConcat", StrScalar>;
 def Daphne_ConcatOp : Daphne_Op<"concat"> {
     let arguments = (ins StrScalar:$lhs, StrScalar:$rhs);
     let results = (outs StrScalar:$res);
-    
+
     let hasFolder = 1;
 }
 
@@ -490,16 +498,16 @@ def Daphne_SliceColOp : Daphne_Op<"sliceCol"> {
     let results = (outs MatrixOrFrame:$res);
 }
 
-def Daphne_InsertOp : Daphne_Op<"insert"> {
-    let arguments = (ins MatrixOrFrame:$target, MatrixOrFrame:$source, Selection:$selectedRows, Selection:$selectedCols);
-    // TODO Not providing a new SSA value will be problematic for inferences.
-    let results = (outs); // no results
-}
+// TODO Create combined InsertOp (see #238).
 
 def Daphne_InsertRowOp : Daphne_Op<"insertRow"> {
-    let arguments = (ins Matrix:$target, Matrix:$source, Size:$rowLowerIncl, Size:$rowUpperExcl);
-    // TODO Not providing a new SSA value will be problematic for inferences.
-    let results = (outs); // no results
+    let arguments = (ins MatrixOrFrame:$arg, MatrixOrFrame:$ins, Size:$rowLowerIncl, Size:$rowUpperExcl);
+    let results = (outs MatrixOrFrame:$res);
+}
+
+def Daphne_InsertColOp : Daphne_Op<"insertCol"> {
+    let arguments = (ins MatrixOrFrame:$arg, MatrixOrFrame:$ins, Size:$colLowerIncl, Size:$colUpperExcl);
+    let results = (outs MatrixOrFrame:$res);
 }
 
 // ****************************************************************************
@@ -556,7 +564,7 @@ def Daphne_OrderOp : Daphne_Op<"order", [
     ShapeFromArg
 ]> {
     // TODO Maybe colIdxs and ascs should be attributes.
-    let arguments = (ins MatrixOrFrame:$arg, Variadic<Size>:$colIdxs, Variadic<BoolScalar>:$ascs, BoolAttr:$returnIdxs);
+    let arguments = (ins MatrixOrFrame:$arg, Variadic<Size>:$colIdxs, Variadic<BoolScalar>:$ascs, BoolScalar:$returnIdxs);
     let results = (outs MatrixOrFrame:$res);
 }
 
@@ -744,8 +752,9 @@ def Daphne_ReplaceOp : Daphne_Op<"replace", [
 }
 
 def Daphne_CTableOp : Daphne_Op<"ctable"> {
-    // TODO The last three arguments should be optional.
-    let arguments = (ins Matrix:$lhs, AnyTypeOf<[Matrix, AnyScalar]>:$rhs, AnyTypeOf<[Matrix, AnyScalar]>:$weights, Size:$outHeight, Size:$outWidth);
+    //// TODO The last three arguments should be optional.
+    //let arguments = (ins Matrix:$lhs, AnyTypeOf<[Matrix, AnyScalar]>:$rhs, AnyTypeOf<[Matrix, AnyScalar]>:$weights, Size:$outHeight, Size:$outWidth);
+    let arguments = (ins Matrix:$lhs, Matrix:$rhs);
     let results = (outs Matrix:$res);
 }
 
@@ -810,6 +819,7 @@ def Daphne_ExceptOp : Daphne_SetOp<"except">;
 // TODO Implement #row inference
 def Daphne_CartesianOp : Daphne_Op<"cartesian", [
     NumColsFromSumOfAllArgs,
+    DeclareOpInterfaceMethods<InferFrameLabelsOpInterface>,
     DeclareOpInterfaceMethods<InferNumRowsOpInterface>
 ]> {
     let arguments = (ins Frame:$lhs, Frame:$rhs); //let arguments = (ins Variadic<Frame>:$args);
@@ -826,7 +836,13 @@ class Daphne_JoinOp<string name, list<OpTrait> traits = []>
     let results = (outs Frame:$res);
 }
 
-def Daphne_InnerJoinOp : Daphne_JoinOp<"innerJoin">;
+def Daphne_InnerJoinOp : Daphne_Op<"innerJoin", [
+    DeclareOpInterfaceMethods<InferFrameLabelsOpInterface>,
+    DeclareOpInterfaceMethods<InferTypesOpInterface>
+]> {
+    let arguments = (ins Frame:$lhs, Frame:$rhs, StrScalar:$lhsOn, StrScalar:$rhsOn);
+    let results = (outs Frame:$res);
+}
 def Daphne_FullOuterJoinOp : Daphne_JoinOp<"fullOuterJoin">;
 def Daphne_LeftOuterJoinOp : Daphne_JoinOp<"leftOuterJoin">;
 def Daphne_AntiJoinOp : Daphne_JoinOp<"antiJoin">;
@@ -922,12 +938,28 @@ def Daphne_FilterRowOp : Daphne_Op<"filterRow", [
 // Grouping
 // ----------------------------------------------------------------------------
 
+def Daphne_GroupAggCount : I32EnumAttrCase<"COUNT", 1>;
+def Daphne_GroupAggSum : I32EnumAttrCase<"SUM", 2>;
+def Daphne_GroupAggMin : I32EnumAttrCase<"MIN", 3>;
+def Daphne_GroupAggMax : I32EnumAttrCase<"MAX", 4>;
+def Daphne_GroupAggAvg : I32EnumAttrCase<"AVG", 5>;
+
+def Daphne_GroupAggEnum : I32EnumAttr<"GroupEnum", "", [Daphne_GroupAggCount, Daphne_GroupAggSum, Daphne_GroupAggMin, Daphne_GroupAggMax, Daphne_GroupAggAvg]>{
+    let cppNamespace = "::mlir::daphne";
+}
+
 def Daphne_GroupOp : Daphne_Op<"group", [
-    DeclareOpInterfaceMethods<InferShapeOpInterface>
-]> {
-    // TODO Maybe colIdxs should be an attribute.
-    let arguments = (ins Frame:$arg, Variadic<Size>:$colIdxs);
-    let results = (outs MatrixOf<[Size]>:$groupIds, MatrixOf<[Size]>:$reprIdxs);
+    AttrSizedOperandSegments,
+    DeclareOpInterfaceMethods<InferFrameLabelsOpInterface>,
+    DeclareOpInterfaceMethods<InferTypesOpInterface>,
+    DeclareOpInterfaceMethods<InferShapeOpInterface>]>{
+    let arguments = (
+        ins Frame:$frame,
+        Variadic<StrScalar>:$keyCol,
+        Variadic<StrScalar>:$aggCol,
+        TypedArrayAttrBase<Daphne_GroupAggEnum, "enum">:$aggFuncs
+    );
+    let results = (outs Frame:$res);
 }
 
 // ****************************************************************************

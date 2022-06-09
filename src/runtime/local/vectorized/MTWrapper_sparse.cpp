@@ -36,9 +36,13 @@ void MTWrapper<CSRMatrix<VT>>::executeSingleQueue(std::vector<std::function<void
     this->initCPPWorkers(q.get(), batchSize8M, verbose);
 
 
-    assert(numOutputs == 1 && "TODO");
-    assert(*(res[0]) == nullptr && "TODO");
-    VectorizedDataSink<CSRMatrix<VT>> dataSink(combines[0], outRows[0], outCols[0]);
+    for(size_t i = 0; i < numOutputs; i++)
+        if(*(res[i]) != nullptr)
+            throw std::runtime_error("TODO");
+
+    std::vector<VectorizedDataSink<CSRMatrix<VT>> *> dataSinks(numOutputs);
+    for(size_t i = 0; i < numOutputs; i++)
+        dataSinks[i] = new VectorizedDataSink<CSRMatrix<VT>>(combines[i], outRows[i], outCols[i]);
 
     // lock for aggregation combine
     // TODO: multiple locks per output
@@ -46,19 +50,25 @@ void MTWrapper<CSRMatrix<VT>>::executeSingleQueue(std::vector<std::function<void
     // create tasks and close input
     uint64_t startChunk = 0;
     uint64_t endChunk = 0;
-    auto chunkParam = 1;
-    LoadPartitioning lp(STATIC, len, chunkParam, this->_numThreads, false);
+    int method=ctx->config.taskPartitioningScheme;
+    int chunkParam = ctx->config.minimumTaskSize;
+    if(chunkParam<=0)
+        chunkParam=1;
+    LoadPartitioning lp(method, len, chunkParam, this->_numThreads, false);
     while (lp.hasNextChunk()) {
         endChunk += lp.getNextChunk();
         q->enqueueTask(new CompiledPipelineTask<CSRMatrix<VT>>(CompiledPipelineTaskData<CSRMatrix<VT>>{funcs, isScalar,
                 inputs, numInputs, numOutputs, outRows, outCols, splits, combines, startChunk, endChunk, outRows,
-                outCols, 0, ctx}, dataSink));
+                outCols, 0, ctx}, dataSinks));
         startChunk = endChunk;
     }
     q->closeInput();
 
     this->joinAll();
-    *(res[0]) = dataSink.consume();
+    for(size_t i = 0; i < numOutputs; i++) {
+        *(res[i]) = dataSinks[i]->consume();
+        delete dataSinks[i];
+    }
 }
 
 template<typename VT>

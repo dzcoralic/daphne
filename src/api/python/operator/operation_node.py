@@ -17,6 +17,8 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+# Modifications Copyright 2022 The DAPHNE Consortium
+#
 # -------------------------------------------------------------
 import ctypes
 from typing import Dict, Iterable, Optional, Sequence, Union, TYPE_CHECKING

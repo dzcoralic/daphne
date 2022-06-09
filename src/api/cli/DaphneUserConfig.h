@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <runtime/local/vectorized/LoadPartitioning.h>
+
 #include <vector>
 #include <string>
 #include <memory>
@@ -28,6 +30,7 @@
  * Container to pass around user configuration
  */
 struct DaphneUserConfig {
+    // Remember to update src/parser/config/UserConfig.json accordingly!
 
     bool use_cuda = false;
     bool use_vectorized_exec = false;
@@ -43,7 +46,10 @@ struct DaphneUserConfig {
     bool explain_sql = false;
     bool explain_vectorized = false;
     bool explain_obj_ref_mgnt = false;
-
+    SelfSchedulingScheme taskPartitioningScheme = STATIC;
+    int numberOfThreads = -1;
+    int minimumTaskSize = 1;
+    
 #ifdef USE_CUDA
     // User config holds once context atm for convenience until we have proper system infrastructure
 

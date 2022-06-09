@@ -24,6 +24,8 @@
 #include <runtime/local/io/FileMetaData.h>
 #include <runtime/local/io/WriteCsv.h>
 #include <sys/time.h>
+#include <runtime/local/io/WriteDaphne.h>
+
 
 // ****************************************************************************
 // Struct for partial template specialization
@@ -58,11 +60,17 @@ struct Write<DenseMatrix<VT>> {
         struct timespec tv;
         clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
         uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
-        File * file = openFileForWrite(filename);
-        FileMetaData::toFile(filename, arg->getNumRows(), arg->getNumCols(), 1, ValueTypeUtils::codeFor<VT>);
-        writeCsv(arg, file);
-        closeFile(file);
-        
+       std::string fn(filename);
+	auto pos = fn.find_last_of('.');
+	std::string ext(fn.substr(pos+1)) ;
+	if (ext == "csv") {
+		File * file = openFileForWrite(filename);
+		FileMetaData::toFile(filename, arg->getNumRows(), arg->getNumCols(), 1, ValueTypeUtils::codeFor<VT>);
+		writeCsv(arg, file);
+		closeFile(file);
+	} else if (ext == "dbdf") {
+		writeDaphne(arg, filename);
+	}
         clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
         uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
         printf("Time to write data:%lld\n", (time_after-time_before));
@@ -76,6 +84,7 @@ struct Write<Frame> {
         FileMetaData::toFile(filename, arg->getNumRows(), arg->getNumCols(), 0, arg->getSchema(), arg->getLabels());
         writeCsv(arg, file);
         closeFile(file);
+	
     }
 };
 

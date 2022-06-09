@@ -112,6 +112,7 @@
         "cuchar": "cpp",
         "memory_resource": "cpp",
         "stop_token": "cpp",
-        "simd": "cpp"
+        "simd": "cpp",
+        "filesystem": "cpp"
     }
 }

@@ -227,6 +227,32 @@ void checkDaphneStatusCodeSimple(StatusCode exp, const std::string & dirPath, co
 }
 
 /**
+ * @brief Checks whether executing the given DaphneDSL script with the command
+ * line interface of the DAPHNE Prototype fails.
+ * 
+ * This is the case when the return code is not `StatusCode::SUCCESS`.
+ * 
+ * @param scriptFilePath The path to the DaphneDSL script file to execute.
+ * @param args The arguments to pass in addition to the script's path. Note
+ * that script arguments must be passed via the `--args` option for this
+ * utility function. Despite the variadic template, each element should be of
+ * type `char *`. The last one does *not* need to be a null pointer.
+ */
+template<typename... Args>
+void checkDaphneFails(const std::string & scriptFilePath, Args ... args) {
+    std::stringstream out;
+    std::stringstream err;
+    int status = runDaphne(out, err, args..., scriptFilePath.c_str());
+
+    CHECK(status != StatusCode::SUCCESS);
+}
+
+template<typename... Args>
+void checkDaphneFailsSimple(const std::string & dirPath, const std::string & name, unsigned idx, Args ... args) {
+    checkDaphneFails(dirPath + name + '_' + std::to_string(idx) + ".daphne", args...);
+}
+
+/**
  * @brief Compares the standard output of executing the given DaphneDSL script
  * with the command line interface of the DAPHNE Prototype to a reference text.
  * 
@@ -430,5 +456,20 @@ void compareDaphneToSomeRefSimple(const std::string & dirPath, const std::string
  * @return The server (has to be kept around for the whole time the worker is in use)
  */
 [[maybe_unused]] [[nodiscard]] std::unique_ptr<grpc::Server> startDistributedWorker(const char *addr, WorkerImpl *workerImpl);
+
+// TODO Ideally, we shouldn't need that. There should be a way to print data
+// objects without technical information such as their physical data
+// representation.
+/**
+ * @brief Replaces all occurrences of "DenseMatrix" and "CSRMatrix" in the
+ * given string by "<SomeMatrix>".
+ * 
+ * Can be used to prepare the outputs of a DaphneDSL script with two different
+ * sets of arguments for string comparison.
+ * 
+ * @param str 
+ * @return
+ */
+std::string generalizeDataTypes(const std::string& str);
 
 #endif //TEST_API_CLI_UTILS_H
