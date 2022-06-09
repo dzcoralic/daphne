@@ -69,7 +69,10 @@ struct RandMatrix<DenseMatrix<VT>, VT> {
                "min and max must not both be zero, consider setting sparsity to zero instead");
         assert(sparsity >= 0.0 && sparsity <= 1.0 &&
                "sparsity has to be in the interval [0.0, 1.0]");
-
+        struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        
         if(res == nullptr)
             res = DataObjectFactory::create<DenseMatrix<VT>>(numRows, numCols, false);
 
@@ -145,8 +148,12 @@ struct RandMatrix<DenseMatrix<VT>, VT> {
                 iSize++;
             }
         }
+                  clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        printf("Time to generate random data:\n%lld\n", (time_after-time_before));
+
     }
-};
+  };
 
 // ----------------------------------------------------------------------------
 // CSRMatrix

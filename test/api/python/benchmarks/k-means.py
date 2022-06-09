@@ -44,5 +44,5 @@ for j in range(0,i):
     P_denom = P.sum(1)
     C = (P.t() @ X) / P_denom.t()
 
-C.print().compute()
+C.compute()
 print(time.time_ns()-t)

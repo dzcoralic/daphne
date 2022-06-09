@@ -40,16 +40,18 @@ for file in glob.glob("*.py"):
     if "k-means" in file:
 
         print("Benchmarking started - filename: "+file)
-        for j in range(0, 1):
+        for j in range(0, 5):
                 p = subprocess.Popen(["python3", file], stdout=PIPE)
                 save_str = str(p.communicate()[-2])
                 save_str = save_str.split("\\n")
+                print(save_str)
                 if "k-meansnp" in file:
-                    ykmn.append(float(float(save_str[1]))/10**6)
+                    ykmn.append(float(float(save_str[1])))
                     np_genk.append(0)
+                elif "k-means-npd" in file:
+                    ykmn.append(float(float(save_str[3])-float(save_str[2])))
                 else:
-                    ykmn.append(float(float(save_str[3])/10**6))
-                    np_genk.append(float(float(save_str[2])))
+                    ykmn.append(float(float(save_str[3])-float(save_str[2])-float(save_str[5])-float(save_str[7])))
                 csvs = glob.glob(TMP_PATH+"/*.csv")
                 for csv in csvs:
                     os.remove(csv)
@@ -64,13 +66,13 @@ res = [f for f in glob.glob("*.daphne") if "bm_kmeans" in f]
 for prog in res:       
     print(prog)
     yapp = []
-    for i in range(0, 1):
+    for i in range(0, 5):
     
         p = subprocess.Popen(["build/bin/daphne", prog], stdout=PIPE)
         save_str = str(p.communicate()[-2])
         save_str = save_str.split('\\n')
         print(save_str)
-        yapp.append(float(str(save_str[1]).replace("'","")))
+        yapp.append(float(str(save_str[5]).replace("'","")))
     kmeans_runtime.append(statistics.median(yapp))
     kmeans_name.append(prog)
 kmeans = pd.DataFrame({

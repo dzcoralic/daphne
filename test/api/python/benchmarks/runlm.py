@@ -11,8 +11,8 @@ y = []
 z=[]
 yapp = []
 ykmn = []
-kmeans_name = []
-kmeans_runtime = []
+lm_name = []
+lm_runtime = []
 sum_tmp_time = []
 sum_time = []
 np_gen = []
@@ -37,29 +37,29 @@ for file in glob.glob("*.py"):
     print(file)
     if "dnp" in file: 
                 continue
-    if "k-means" in file:
+    if "lm" in file:
 
         print("Benchmarking started - filename: "+file)
         for j in range(0, 1):
                 p = subprocess.Popen(["python3", file], stdout=PIPE)
                 save_str = str(p.communicate()[-2])
                 save_str = save_str.split("\\n")
-                if "k-meansnp" in file:
-                    ykmn.append(float(float(save_str[1]))/10**6)
-                    np_genk.append(0)
+                print(save_str)
+                if "lm_np" in file:
+                    ykmn.append(float(float(save_str[1])))
                 else:
-                    ykmn.append(float(float(save_str[3])/10**6))
+                    ykmn.append(float(float(save_str[3])))
                     np_genk.append(float(float(save_str[2])))
                 csvs = glob.glob(TMP_PATH+"/*.csv")
                 for csv in csvs:
                     os.remove(csv)
-        kmeans_runtime.append(statistics.median(ykmn))
+        lm_runtime.append(statistics.median(ykmn))
         np_gen_allk.append(statistics.median(np_genk))
-        kmeans_name.append(file)
+        lm_name.append(file)
         print("Benchmarking complete - filename: "+file)
 
 os.chdir(PROTOTYPE_PATH)
-res = [f for f in glob.glob("*.daphne") if "bm_kmeans" in f]
+res = [f for f in glob.glob("*.daphne") if "bm_lm" in f]
 
 for prog in res:       
     print(prog)
@@ -71,9 +71,9 @@ for prog in res:
         save_str = save_str.split('\\n')
         print(save_str)
         yapp.append(float(str(save_str[1]).replace("'","")))
-    kmeans_runtime.append(statistics.median(yapp))
-    kmeans_name.append(prog)
-kmeans = pd.DataFrame({
-    "kmeans_name":kmeans_name,
-    "kmeans_runtime":kmeans_runtime})
-kmeans.to_csv("test/api/python/benchmarks/kmeans.csv")
+    lm_runtime.append(statistics.median(yapp))
+    lm_name.append(prog)
+lm = pd.DataFrame({
+    "lm_name":lm_name,
+    "lm_runtime":lm_runtime})
+lm.to_csv("test/api/python/benchmarks/lm.csv")

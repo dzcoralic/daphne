@@ -28,7 +28,10 @@ import sys
 
 daphne_context = DaphneContext()
 dim = int(sys.argv[1])
-m1 = daphne_context.rand(rows=dim,cols=dim,min=1.0,max=5.0,sparsity=0.5,seed=123)
+
 t = time.time_ns()
-(m1+m1).sum().print().compute()
+
+m1 = daphne_context.rand(rows=dim,cols=dim,min=1.0,max=5.0,sparsity=0.5,seed=123)
+m1 = m1+m1
+(m1).sum().print().compute()
 print(time.time_ns()-t)

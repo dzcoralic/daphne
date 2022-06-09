@@ -78,12 +78,12 @@ class OperationNode(DAGNode):
                 daphneLibResult = libDaphneShared.getResult()
                 np_time = time.time_ns()
                 result = np.ctypeslib.as_array(ctypes.cast(daphneLibResult.address, ctypes.POINTER(self.getType(daphneLibResult.vtc))), shape=[daphneLibResult.rows,daphneLibResult.cols]) 
-                print("npgen time:")
+                print("Result numpy arr construction time, ctypes:")
                 print(time.time_ns() - np_time)
             if self._output_type == OutputType.MATRIX and type=="files":
                 np_time = time.time_ns()
                 arr = np.genfromtxt(result, delimiter=',')
-                print("npgen time:")
+                print("Result numpy arr construction time, files:")
                 print(time.time_ns() - np_time)
                 return arr
             if result is None:

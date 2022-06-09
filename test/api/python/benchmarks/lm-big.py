@@ -40,5 +40,5 @@ lmbda = daphne_context.fill(0.001, X.ncol(),1)
 A = (X.t() @ X) + lmbda.diagMatrix()
 b = X.t() @ y
 beta = A.solve(b)
-beta.print().compute()
+beta.compute()
 print(time.time_ns()-t)

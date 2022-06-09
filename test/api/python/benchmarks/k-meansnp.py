@@ -6,9 +6,9 @@ import sys
 r=10000#100000 # and 1000000 # number of records (rows in X)
 c=5                   # number of centroids (rows in C)
 f=1000                 # number of features (columns in X and C)
-i=10           # number of iterations
+i=20           # number of iterations
 
-X = np.genfromtxt("mat1_.csv", delimiter=",")
+X = np.genfromtxt("mat1.csv", delimiter=",")
 C = np.genfromtxt("mat2.csv", delimiter=",")
 X.shape = (r, f)
 C.shape = (c, f)
@@ -28,6 +28,6 @@ for j in range(0,i):
     pz = np.matmul(np.transpose(P),X)
     #np.seterr(invalid="ignore")
     C = np.divide((pz),np.transpose(P_denom))
-print(C)
+#print(C)
 print("res: 0")
 print(time.time_ns()-t)

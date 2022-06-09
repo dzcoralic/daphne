@@ -28,7 +28,7 @@ from api.python.context.daphne_context import DaphneContext
 import sys 
 import numpy as np
 
-r=10000 # and 1000000 # number of records (rows in X)
+r=1000000 # and 1000000 # number of records (rows in X)
 c=5                    # number of centroids (rows in C)
 f=1000                 # number of features (columns in X and C)
 i=20                   # number of iterations
