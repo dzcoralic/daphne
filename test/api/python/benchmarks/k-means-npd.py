@@ -28,15 +28,17 @@ from api.python.context.daphne_context import DaphneContext
 import sys 
 import numpy as np
 
-r=10000 # and 1000000 # number of records (rows in X)
-c=5                    # number of centroids (rows in C)
-f=1000                 # number of features (columns in X and C)
-i=20                   # number of iterations
-daphne_context = DaphneContext()
-m1 = np.genfromtxt("mat1.csv", delimiter=",")
-m2 = np.genfromtxt("mat2.csv", delimiter=",")
+mat1 = sys.argv[1]
+mat2 = sys.argv[2]
+r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[4])                 # number of features (columns in X and C)
+c = int(sys.argv[5])                    # number of centroids (rows in C)
+i = int(sys.argv[6])         # number of iterationsdaphne_context = DaphneContext()
+m1 = np.genfromtxt(mat1, delimiter=",")
+m2 = np.genfromtxt(mat2, delimiter=",")
 m1.shape = (r, f)
 m2.shape = (c, f)
+daphne_context = DaphneContext()
 X = daphne_context.from_numpy_ctypes(m1)
 C = daphne_context.from_numpy_ctypes(m2)
 t = time.time_ns()

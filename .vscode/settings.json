@@ -114,5 +114,6 @@
         "stop_token": "cpp",
         "simd": "cpp",
         "filesystem": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }

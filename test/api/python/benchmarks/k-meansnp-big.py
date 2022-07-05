@@ -3,13 +3,15 @@ import numpy as np
 import sys
 
 
-r=1000000#100000 # and 1000000 # number of records (rows in X)
-c=5                   # number of centroids (rows in C)
-f=1000                 # number of features (columns in X and C)
-i=20           # number of iterations
+mat1 = sys.argv[1]
+mat2 = sys.argv[2]
+r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[4])                 # number of features (columns in X and C)
+c = int(sys.argv[5])                    # number of centroids (rows in C)
+i = int(sys.argv[6])         # number of iterations
 
-X = np.genfromtxt("mat1_k.csv", delimiter=",")
-C = np.genfromtxt("mat2_k.csv", delimiter=",")
+X = np.genfromtxt(mat1, delimiter=",")
+C = np.genfromtxt(mat2, delimiter=",")
 X.shape = (r, f)
 C.shape = (c, f)
 

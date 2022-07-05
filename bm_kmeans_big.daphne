@@ -1,8 +1,10 @@
 // K-means clustering.
-r=10;
-c=10;
-f=20;
-i=1;
+mat1 = $mat1;
+mat2 = $mat2;
+r=$r;
+c=$c;
+f=$f;
+i=$i;
 // Arguments:
 // - r ... number of records
 // - c ... number of centroids
@@ -10,8 +12,8 @@ i=1;
 // - i ... number of iterations
 
 // Data generation.
-X = readMatrix("test/api/python/benchmarks/mat1_k.py");
-C = readMatrix("test/api/python/benchmarks/mat2_k.py");
+X = readMatrix(mat1);
+C = readMatrix(mat2);
 t_start = now();
 // K-means clustering (decisive part).
 for(i in 1:i) {

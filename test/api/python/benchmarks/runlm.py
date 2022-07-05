@@ -3,77 +3,50 @@ import glob, os
 from re import sub
 import statistics
 import subprocess
+from time import sleep
 from api.python.utils.consts import PROTOTYPE_PATH, TMP_PATH
 import pandas as pd
-
-x = []
-y = []
-z=[]
-yapp = []
-ykmn = []
-lm_name = []
-lm_runtime = []
-sum_tmp_time = []
-sum_time = []
-np_gen = []
-np_gen_all = []
-np_genk = []
-np_gen_allk = []
-script_running = []
-data_gen_time = []
-compute = []
-data_gen_all = []
-add_time = []
-for file in glob.glob("*.py"):
-    yapp.clear()
-    ykmn.clear()
-    sum_tmp_time.clear()
-    np_gen.clear()
-    script_running.clear()
-    data_gen_time.clear()
-
-    if "runAllBenchmarks" in file or "plotAllBenchmarks" in file or "dsl_lib_overhead" in file:
-           continue
-    print(file)
-    if "dnp" in file: 
-                continue
-    if "lm" in file:
-
-        print("Benchmarking started - filename: "+file)
-        for j in range(0, 1):
-                p = subprocess.Popen(["python3", file], stdout=PIPE)
-                save_str = str(p.communicate()[-2])
-                save_str = save_str.split("\\n")
-                print(save_str)
-                if "lm_np" in file:
-                    ykmn.append(float(float(save_str[1])))
-                else:
-                    ykmn.append(float(float(save_str[3])))
-                    np_genk.append(float(float(save_str[2])))
-                csvs = glob.glob(TMP_PATH+"/*.csv")
-                for csv in csvs:
-                    os.remove(csv)
-        lm_runtime.append(statistics.median(ykmn))
-        np_gen_allk.append(statistics.median(np_genk))
-        lm_name.append(file)
-        print("Benchmarking complete - filename: "+file)
-
+import sys 
+mat1 = str(sys.argv[1])
+r = int(sys.argv[2])
+c = int(sys.argv[3])
+output = str(sys.argv[4])
+reps = 10
+tmp_time = []
+full_time = []
+script = []
+size  = []
+p = subprocess.Popen(["python3", "genData.py",mat1,str(r),str(c)], stdout=PIPE)
+p.communicate()
+sleep(1)
+for i in range(reps):
+    p1 = subprocess.Popen(["python3", "lm_np-big.py",mat1,str(r),str(c)], stdout=PIPE)
+    savestr=str(p1.communicate()[0]).split("\\n")
+    tmp_time.append(float(savestr[1]))
+full_time.append(statistics.median(tmp_time))
+tmp_time.clear()
+script.append("full_numpy")
+size.append(str(r)+"x"+str(c))
+for i in range(reps):
+    p2 = subprocess.Popen(["python3", "lm-big.py",mat1,str(r),str(c)], stdout=PIPE)
+    savestr=str(p2.communicate()[0]).split("\\n")
+    tmp_time.append(float(savestr[3])-float(savestr[5]))
+full_time.append(statistics.median(tmp_time))
+tmp_time.clear()
+script.append("daphnelib")
+size.append(str(r)+"x"+str(c))
 os.chdir(PROTOTYPE_PATH)
-res = [f for f in glob.glob("*.daphne") if "bm_lm" in f]
-
-for prog in res:       
-    print(prog)
-    yapp = []
-    for i in range(0, 1):
-    
-        p = subprocess.Popen(["build/bin/daphne", prog], stdout=PIPE)
-        save_str = str(p.communicate()[-2])
-        save_str = save_str.split('\\n')
-        print(save_str)
-        yapp.append(float(str(save_str[1]).replace("'","")))
-    lm_runtime.append(statistics.median(yapp))
-    lm_name.append(prog)
+for i in range(reps):
+    p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_lm-big.daphne","mat1=\"test/api/python/benchmarks/"+mat1+"\"","r="+str(r),"c="+str(c)], stdout=PIPE)
+    savestr=str(p3.communicate()[0]).replace("'","").split("\\n")    
+    tmp_time.append(float(savestr[-1]))
+full_time.append(statistics.median(tmp_time))
+tmp_time.clear()
+script.append("daphnedsl")
+size.append(str(r)+"x"+str(c))
 lm = pd.DataFrame({
-    "lm_name":lm_name,
-    "lm_runtime":lm_runtime})
-lm.to_csv("test/api/python/benchmarks/lm.csv")
+    "size":size,
+    "time":full_time,
+    "name": script})
+
+lm.to_csv("test/api/python/benchmarks/"+output)
