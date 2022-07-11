@@ -73,7 +73,7 @@ struct Write<DenseMatrix<VT>> {
 	}
         clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
         uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
-        printf("Time to write data:%lld\n", (time_after-time_before));
+        printf("Time to write data:\n%lld\n", (time_after-time_before));
     }
 };
 

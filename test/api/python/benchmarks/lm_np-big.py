@@ -7,6 +7,7 @@ r = int(sys.argv[2])
 c = int(sys.argv[3])               
 # Data generation.
 XY = np.genfromtxt(mat1, delimiter=",")
+
 XY.shape = (r, c)
 
 t = time.time_ns()

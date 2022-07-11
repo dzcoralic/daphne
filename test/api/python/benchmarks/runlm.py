@@ -10,7 +10,6 @@ import sys
 mat1 = str(sys.argv[1])
 r = int(sys.argv[2])
 c = int(sys.argv[3])
-output = str(sys.argv[4])
 reps = 10
 tmp_time = []
 full_time = []
@@ -22,8 +21,14 @@ sleep(1)
 for i in range(reps):
     p1 = subprocess.Popen(["python3", "lm_np-big.py",mat1,str(r),str(c)], stdout=PIPE)
     savestr=str(p1.communicate()[0]).split("\\n")
+    if len(savestr) < 2:
+        continue
+    print(savestr)
     tmp_time.append(float(savestr[1]))
-full_time.append(statistics.median(tmp_time))
+if len(tmp_time) > 1:
+    full_time.append(statistics.median(tmp_time))
+else:
+    full_time.append(0)
 tmp_time.clear()
 script.append("full_numpy")
 size.append(str(r)+"x"+str(c))
@@ -49,4 +54,4 @@ lm = pd.DataFrame({
     "time":full_time,
     "name": script})
 
-lm.to_csv("test/api/python/benchmarks/"+output)
+lm.to_csv("test/api/python/benchmarks/lm.csv")

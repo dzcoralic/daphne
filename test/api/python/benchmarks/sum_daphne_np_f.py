@@ -27,8 +27,8 @@ import numpy as np
 import time
 from api.python.context.daphne_context import DaphneContext
 ftime = time.time_ns()
-daphne_context = DaphneContext()
 dim = int(sys.argv[1])
+daphne_context = DaphneContext()
 m1 = daphne_context.rand(rows=dim,cols=dim,min=1,max=5,sparsity=0.5,seed=123).compute(type="files")
 m1.shape = (dim, dim)
 t = time.time_ns()

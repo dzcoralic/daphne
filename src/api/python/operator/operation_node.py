@@ -62,7 +62,7 @@ class OperationNode(DAGNode):
         self._is_python_local_data = is_python_local_data
         self._brackets = brackets
         self._output_type = output_type
-
+        
     def compute(self, type="ctypes"):
         if self._result_var is None:
             self._script = DaphneDSLScript(self.daphne_context)

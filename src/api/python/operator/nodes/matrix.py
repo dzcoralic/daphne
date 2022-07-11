@@ -27,6 +27,7 @@ from typing import Union, TYPE_CHECKING, Dict, Iterable, Optional, Sequence
 from api.python.script_building.dag import OutputType
 from api.python.utils.consts import VALID_INPUT_TYPES, VALID_ARITHMETIC_TYPES, BINARY_OPERATIONS, TMP_PATH
 from api.python.operator.operation_node import OperationNode
+import time
 from api.python.operator.nodes.scalar import Scalar
 import numpy as np
 if TYPE_CHECKING:
@@ -53,7 +54,7 @@ class Matrix(OperationNode):
         code_line = super().code_line(var_name, unnamed_input_vars, named_input_vars).format(file_name=var_name, TMP_PATH = TMP_PATH)
         
         if self._is_numpy() and self.operation == "readMatrix":
-            
+            t = time.time()
             with open(TMP_PATH+"/"+var_name+".csv", "wb") as f:
                 np.savetxt(f, self._np_array, delimiter=",")
                 f.close()
@@ -61,7 +62,8 @@ class Matrix(OperationNode):
             with open(TMP_PATH+"/"+var_name+".csv.meta", "w") as f:
                 f.write(str(np.shape(self._np_array)[0])+","+str(np.shape(self._np_array)[1])+","+"1"+","+self.getDType(self._np_array.dtype))
                 f.close()
-        
+            print("writing numpy:")
+            print(time.time()-t)
         return code_line
     
     def getDType(self, d_type):
