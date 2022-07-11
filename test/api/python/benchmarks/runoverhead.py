@@ -22,7 +22,7 @@ name = []
 size = []
 tmp_time = []
 full_time = []
-reps = 1
+reps = 15
 for dim in dims:
     for i in range(reps):
         p1 = subprocess.Popen(["python3", "rand.py", str(dim)], stdout=PIPE)
