@@ -10,6 +10,7 @@ import sys
 mat1 = str(sys.argv[1])
 r = int(sys.argv[2])
 c = int(sys.argv[3])
+out = sys.argv[4]
 reps = 10
 tmp_time = []
 full_time = []
@@ -36,6 +37,7 @@ for i in range(reps):
     p2 = subprocess.Popen(["python3", "lm-big.py",mat1,str(r),str(c)], stdout=PIPE)
     savestr=str(p2.communicate()[0]).split("\\n")
     tmp_time.append(float(savestr[3])-float(savestr[5]))
+    print(savestr)
 full_time.append(statistics.median(tmp_time))
 tmp_time.clear()
 script.append("daphnelib")
@@ -45,6 +47,7 @@ for i in range(reps):
     p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_lm-big.daphne","mat1=\"test/api/python/benchmarks/"+mat1+"\"","r="+str(r),"c="+str(c)], stdout=PIPE)
     savestr=str(p3.communicate()[0]).replace("'","").split("\\n")    
     tmp_time.append(float(savestr[-1]))
+    print(savestr)
 full_time.append(statistics.median(tmp_time))
 tmp_time.clear()
 script.append("daphnedsl")
@@ -54,4 +57,4 @@ lm = pd.DataFrame({
     "time":full_time,
     "name": script})
 
-lm.to_csv("test/api/python/benchmarks/lm.csv")
+lm.to_csv("test/api/python/benchmarks/"+out)

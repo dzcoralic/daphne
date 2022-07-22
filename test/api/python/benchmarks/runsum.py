@@ -34,7 +34,7 @@ write_np = []
 read_tmp = []
 read = []
 fname = []
-reps = 3
+reps = 10
 for rand in rands:
     for i in range(reps):
         p1 = subprocess.Popen(["python3", "sum_c.py",str(rand)], stdout=subprocess.PIPE)
@@ -50,7 +50,8 @@ for rand in rands:
         np_gen_tmp.append(float(savestr[8]))
         script_running_tmp.append(float(savestr[11]))
         ftime_tmp.append(float(savestr[13]))
-    print("Data transfer via ctypes")
+        print("Repetition "+str(i)+" of "+str(reps))
+    print("Data transfer via ctypes FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     fname.append("Data transfer via ctypes")
     np_gen.append(statistics.median(np_gen_tmp))
     np_gen_tmp.clear()
@@ -84,7 +85,8 @@ for rand in rands:
         random_data_gen_tmp.append(float(savestr[10]))
         write_tmp.append(float(savestr[12]))
         ftime_tmp.append(float(savestr[8]))
-    print("Daphne gen , numpy summation, files transfer")
+        print("Repetition "+str(i)+" of "+str(reps))
+    print("Daphne gen , numpy summation, files transfer FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     fname.append("Data generated in Daphne, Operations in NumPy")
     res_construct.append(statistics.median(res_construct_tmp))
     res_construct_tmp.clear()
@@ -111,13 +113,14 @@ for rand in rands:
             continue
         savestr=str(p3.communicate()[0]).split("\\n")
         
+        print("Repetition "+str(i)+" of "+str(reps))
         read_tmp.append(float(savestr[1]))
         time_to_add_tmp.append(float(savestr[3]))
         time_to_sum_tmp.append(float(savestr[5]))
         write_np_tmp.append(float(savestr[8]))
         script_running_tmp.append(float(savestr[11]))
         ftime_tmp.append(float(savestr[13]))
-    print("Data transfer via files")
+    print("Data transfer via files FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     read.append(statistics.median(read_tmp))
     read_tmp.clear()
     time_to_add.append(statistics.median(time_to_add_tmp))
@@ -147,7 +150,8 @@ for rand in rands:
         time_to_sum_tmp.append(float(savestr[6]))
         ftime_tmp.append(float(savestr[8]))
         random_data_gen_tmp.append(float(savestr[10]))
-    print("Data gen in daphne, sum in numpy")
+        print("Repetition "+str(i)+" of "+str(reps))
+    print("Data gen in daphne, sum in numpy FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     read.append(0)
     time_to_add.append(statistics.median(time_to_add_tmp))
     time_to_add_tmp.clear()
@@ -170,11 +174,12 @@ for rand in rands:
             continue
         savestr=str(p3.communicate()[0]).split("\\n")
         #print(savestr)
+        print("Repetition "+str(i)+" of "+str(reps))
         time_to_add_tmp.append(float(savestr[1]))
         time_to_sum_tmp.append(float(savestr[3]))
         np_gen_tmp.append(float(savestr[7]))
         ftime_tmp.append(float(savestr[9]))
-    print("Pure Numpy")
+    print("Pure Numpy FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     read.append(0)
     time_to_add.append(statistics.median(time_to_add_tmp))
     time_to_add_tmp.clear()
@@ -199,11 +204,12 @@ for rand in rands:
             continue
         savestr=str(p3.communicate()[0]).replace("'","").split("\\n")
         #print(savestr)    
+        print("Repetition "+str(i)+" of "+str(reps))
         random_data_gen_tmp.append(float(savestr[1]))
         time_to_add_tmp.append(float(savestr[3]))
         time_to_sum_tmp.append(float(savestr[5]))
         ftime_tmp.append(float(savestr[8]))
-    print("DaphneDSL")
+    print("DaphneDSL FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     read.append(0)
     time_to_add.append(statistics.median(time_to_add_tmp))
     time_to_add_tmp.clear()

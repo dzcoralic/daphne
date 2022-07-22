@@ -30,17 +30,19 @@ for dim in dims:
         if len(savestr) < 2:
             continue
         tmp_time.append(float(savestr[-2]))
+        print("DaphneLib. Size "+str(dim)+"x"+str(dim)+". Repetition "+str(i)+" of "+str(reps))
     full_time.append(statistics.median(tmp_time))
     tmp_time.clear()
     name.append("DaphneLib")
     size.append(str(dim))
-
+    
 os.chdir(PROTOTYPE_PATH)
 for dim in dims:
     for i in range(reps):
         p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_rand_mat_gen.daphne","dim="+str(dim)], stdout=PIPE)
         savestr=str(p3.communicate()[0]).replace("'","").split("\\n")
         tmp_time.append(float(savestr[-1]))
+        print("DaphneDSL. Size "+str(dim)+"x"+str(dim)+". Repetition "+str(i)+" of "+str(reps))
     full_time.append(statistics.median(tmp_time))
     tmp_time.clear()
     name.append("DaphneDSL")

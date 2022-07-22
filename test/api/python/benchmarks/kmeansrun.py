@@ -14,7 +14,8 @@ r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
 f = int(sys.argv[4])                 # number of features (columns in X and C)
 c = int(sys.argv[5])                    # number of centroids (rows in C)
 i = int(sys.argv[6])         # number of iterations
-reps = 30
+out = sys.argv[7]
+reps = 10
 tmp_time = []
 full_time = []
 script = []
@@ -83,4 +84,4 @@ kmns = pd.DataFrame({
     "time":full_time,
     "name": script})
 
-kmns.to_csv("test/api/python/benchmarks/kmeans.csv")
+kmns.to_csv("test/api/python/benchmarks/"+out)
