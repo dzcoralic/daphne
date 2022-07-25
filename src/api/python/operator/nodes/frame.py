@@ -123,3 +123,7 @@ class Frame(OperationNode):
     def numCols(self) -> 'Scalar':
         ":return: Scalar containing number of columns of frame"
         return Scalar(self.daphne_context, 'ncol',[self])
+
+    def write(self, file: str) -> 'OperationNode':
+        return OperationNode(self.daphne_context, 'writeFrame', [self,'\"'+file+'\"'], output_type=OutputType.NONE)
+    

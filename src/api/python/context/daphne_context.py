@@ -56,6 +56,23 @@ class DaphneContext(object):
 
         return Matrix(self, 'readMatrix', unnamed_params)
     
+    def readMatrix(self, file) -> Matrix:
+        """Read Matrix from a provided csv file.
+        :param file: path to the csv file containing data
+        :return: A Matrix
+        """
+        unnamed_params = ['\"'+file+'\"']
+        return Matrix(self, 'readMatrix', unnamed_params)
+        
+
+    def readFrame(self, file) -> Matrix:
+        """Read Frame from a provided csv file.
+        :param file: path to the csv file containing data
+        :return: A Frame
+        """
+        unnamed_params = ['\"'+file+'\"']
+        return Frame(self, 'readMatrix', unnamed_params)
+        
     def from_numpy_ctypes(self, mat: np.array) -> Matrix:
         """Generate DAGNode representing matrix with data given by a numpy array.
         :param mat: the numpy array
@@ -91,11 +108,11 @@ class DaphneContext(object):
     def from_pandas(self, df: pd.DataFrame,
             *args: Sequence[VALID_INPUT_TYPES],
             **kwargs: Dict[str, VALID_INPUT_TYPES]) -> Frame:
-        """Generate DAGNode representing matrix with data given by a numpy array.
+        """Generate DAGNode representing Frame with data given by a numpy array.
         :param mat: the numpy array
         :param args: unnamed parameters
         :param kwargs: named parameters
-        :return: A Matrix
+        :return: A Frame
         """
 
         unnamed_params = ['"src/api/python/tmp/{file_name}.csv\"']
@@ -124,7 +141,7 @@ class DaphneContext(object):
         :param max: max value for cells
         :param sparsity: fraction of non-zero cells
         :param seed: random seed
-        :return:
+        :return: A Matrix
         """
         if rows < 0:
             raise ValueError("In rand statement, can only assign rows a long (integer) value >= 0 "

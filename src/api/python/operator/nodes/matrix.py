@@ -168,20 +168,29 @@ class Matrix(OperationNode):
         return Matrix(self.daphne_context,'sqrt', [self])
     
     def aggMin(self, axis: int = None) -> 'OperationNode':
-        
-        return Matrix(self.daphne_context, 'aggMin', [self, axis])
+        if axis is not None:        
+            return Matrix(self.daphne_context, 'aggMin', [self, axis])
+        return Scalar(self.daphne_context, 'aggMin', [self])
 
+    def aggMax(self, axis: int = None) -> 'OperationNode':
+        if axis is not None:        
+            return Matrix(self.daphne_context, 'aggMax', [self, axis])
+        return Scalar(self.daphne_context, 'aggMax', [self])
+    
     def mean(self, axis: int = None) -> 'OperationNode':
-        return Matrix(self.daphne_context, 'mean', [self, axis])
+        if axis is not None:
+            return Matrix(self.daphne_context, 'mean', [self, axis])
+        return Scalar(self.daphne_context, 'mean', [self])
 
     def stddev(self, axis: int = None) -> 'OperationNode':
-        return Matrix(self.daphne_context, 'stddev', [self, axis])
-    
+        if axis is not None:
+            return Matrix(self.daphne_context, 'stddev', [self, axis])
+        return Scalar(self.daphne_context, 'stddev', [self])
     def ncol(self) -> 'OperationNode':
-        return Matrix(self.daphne_context, 'ncol', [self])
+        return Scalar(self.daphne_context, 'ncol', [self])
 
     def nrow(self) -> 'OperationNode':
-        return Matrix(self.daphne_context, 'nrow', [self])
+        return Scalar(self.daphne_context, 'nrow', [self])
 
     def diagMatrix(self) -> 'OperationNode':
         return Matrix(self.daphne_context, 'diagMatrix', [self])
@@ -206,6 +215,9 @@ class Matrix(OperationNode):
         :return: `Matrix` representing operation
         """
         return Matrix(self.daphne_context, 'min', [self, other])
-        
+    
+    def write(self, file: str) -> 'OperationNode':
+        return OperationNode(self.daphne_context, 'writeMatrix', [self,'\"'+file+'\"'], output_type=OutputType.NONE)
+    
     def print(self):
         return OperationNode(self.daphne_context,'print',[self], output_type=OutputType.NONE)
