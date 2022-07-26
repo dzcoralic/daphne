@@ -21,11 +21,12 @@
 #
 # -------------------------------------------------------------
 import ctypes
+import os
 from typing import Dict, Iterable, Optional, Sequence, Union, TYPE_CHECKING
 from api.python.script_building.dag import DAGNode, OutputType
 import time
 from api.python.script_building.script import DaphneDSLScript
-from api.python.utils.consts import BINARY_OPERATIONS, F32, F64, SI32, SI64, SI8, UI32, UI64, UI8, VALID_INPUT_TYPES, DaphneLibResult, libDaphneShared
+from api.python.utils.consts import BINARY_OPERATIONS, F32, F64, SI32, SI64, SI8, TMP_PATH, UI32, UI64, UI8, VALID_INPUT_TYPES, DaphneLibResult, libDaphneShared
 from api.python.utils.helpers import create_params_string
 import numpy as np
 import pandas as pd
@@ -75,6 +76,7 @@ class OperationNode(DAGNode):
                 fmd = f.read().split(",")
                 df.columns=fmd[1+2+int(fmd[1]):]
                 result = df
+                self.clear_tmp()
             if self._output_type == OutputType.MATRIX and type=="ctypes":  
                 libDaphneShared.getResult.restype = DaphneLibResult
                 daphneLibResult = libDaphneShared.getResult()
@@ -82,17 +84,21 @@ class OperationNode(DAGNode):
                 result = np.ctypeslib.as_array(ctypes.cast(daphneLibResult.address, ctypes.POINTER(self.getType(daphneLibResult.vtc))), shape=[daphneLibResult.rows,daphneLibResult.cols]) 
                 print("Result numpy arr construction time, ctypes:")
                 print(time.time_ns() - np_time)
+                self.clear_tmp()
             if self._output_type == OutputType.MATRIX and type=="files":
                 np_time = time.time_ns()
                 arr = np.genfromtxt(result, delimiter=',')
                 print("Result numpy arr construction time, files:")
                 print(time.time_ns() - np_time)
+                self.clear_tmp()
                 return arr
             if result is None:
                 return
             return result
 
-
+    def clear_tmp(self):
+       for f in os.listdir(TMP_PATH):
+          os.remove(os.path.join(TMP_PATH,f))
     def code_line(self, var_name: str, unnamed_input_vars: Sequence[str], named_input_vars: Dict[str, str])->str:
         if self._brackets:
             return f'{var_name}={unnamed_input_vars[0]}[{",".join(unnamed_input_vars[1:])}];'
