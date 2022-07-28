@@ -25,9 +25,9 @@ p.communicate()
 p = subprocess.Popen(["python3", "genData.py",mat2,str(c),str(f)], stdout=subprocess.PIPE)
 p.communicate()
 sleep(1)
-for i in range(reps):
+for rep in range(reps):
     p1 = subprocess.Popen(["python3", "k-meansnp-big.py",mat1,mat2,str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
-    if i == 0:
+    if rep == 0:
         continue
     savestr=str(p1.communicate()[0]).split("\\n")
     if len(savestr) < 2:
@@ -39,10 +39,10 @@ print()
 tmp_time.clear()
 script.append("Numpy")
 size.append(str(r)+"x"+str(c))
-for i in range(reps):
+for rep in range(reps):
 
     p2 = subprocess.Popen(["python3", "k-means-big.py",mat1,mat2,str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
-    if i == 0:
+    if rep == 0:
         continue
     savestr=str(p2.communicate()[0]).split("\\n")
     print(savestr)
@@ -52,9 +52,9 @@ tmp_time.clear()
 print()
 script.append("DaphneLib")
 size.append(str(r)+"x"+str(c))
-for i in range(reps):
+for rep in range(reps):
     p3 = subprocess.Popen(["python3", "k-means-npd.py",mat1,mat2,str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
-    if i == 0:
+    if rep == 0:
         continue
     savestr=str(p3.communicate()[0]).split("\\n")
     print(savestr)
@@ -65,11 +65,11 @@ print()
 script.append("DaphneLib NumPy")
 size.append(str(r)+"x"+str(c))
 os.chdir(PROTOTYPE_PATH)
-for i in range(reps):
+for rep in range(reps):
     p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_kmeans_big.daphne",
     "mat1=\"test/api/python/benchmarks/"+mat1+"\"","mat2=\"test/api/python/benchmarks/"+mat2+"\"",
     "r="+str(r),"f="+str(f),"c="+str(c),"i="+str(i)], stdout=subprocess.PIPE)
-    if i == 0:
+    if rep == 0:
         continue
     savestr=str(p3.communicate()[0]).replace("'","").split("\\n")
     print(savestr)    
