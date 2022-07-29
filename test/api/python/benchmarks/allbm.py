@@ -9,13 +9,13 @@ import pandas as pd
 import sys 
 
 print("Starting overhead benchmark:")
-p = subprocess.Popen(["python3", "runoverhead.py"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_overhead.py"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("Overhead benchmark done")
 
 
 print("Starting summation addition benchmark:")
-p = subprocess.Popen(["python3", "runsum.py"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_addsum.py"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("Summation addition benchmark done")
 
@@ -31,12 +31,12 @@ print(str(p.communicate()[0]))
 print("K-Means 2 benchmark done")
 
 print("Starting lm benchmark:")
-p = subprocess.Popen(["python3", "runlm.py", "mat1.csv", str(10000), str(1000), "lm1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_lm.py", "mat1.csv", str(10000), str(1000), "lm1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("LM benchmark done")
 
 print("Starting lm 2 benchmark:")
-p = subprocess.Popen(["python3", "runlm.py", "mat1.csv", str(100000), str(1000), "lm2.csv"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_lm.py", "mat1.csv", str(100000), str(1000), "lm2.csv"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("LM 2 benchmark done")
 if os.path.exists("mat1.csv"):

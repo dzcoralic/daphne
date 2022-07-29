@@ -37,7 +37,7 @@ fname = []
 reps = 10
 for rand in rands:
     for i in range(reps):
-        p1 = subprocess.Popen(["python3", "sum_c.py",str(rand)], stdout=subprocess.PIPE)
+        p1 = subprocess.Popen(["python3", "add_sum_nds.py",str(rand)], stdout=subprocess.PIPE)
         if i == 0:
             continue
         savestr=str(p1.communicate()[0]).split("\\n")
@@ -74,7 +74,7 @@ for rand in rands:
 for rand in rands:
     for i in range(reps):
 
-        p2 = subprocess.Popen(["python3", "sum_daphne_np_f.py",str(rand)], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(["python3", "add_sum_dnf.py",str(rand)], stdout=subprocess.PIPE)
         if i == 0:
             continue
         savestr=str(p2.communicate()[0]).split("\\n")
@@ -108,7 +108,7 @@ for rand in rands:
     size.append(rand)    
 for rand in rands:        
     for i in range(reps):
-        p3 = subprocess.Popen(["python3", "sum_f.py",str(rand)], stdout=subprocess.PIPE)
+        p3 = subprocess.Popen(["python3", "add_sum_ndf.py",str(rand)], stdout=subprocess.PIPE)
         if i == 0:
             continue
         savestr=str(p3.communicate()[0]).split("\\n")
@@ -141,7 +141,7 @@ for rand in rands:
     fname.append("Data Transfer via Files, Daphne to Numpy")
 for rand in rands:        
     for i in range(reps):
-        p3 = subprocess.Popen(["python3", "sum_daphne_np.py",str(rand)], stdout=subprocess.PIPE)
+        p3 = subprocess.Popen(["python3", "sum_dns.py",str(rand)], stdout=subprocess.PIPE)
         if i == 0:
             continue
         savestr=str(p3.communicate()[0]).split("\\n")
@@ -169,7 +169,7 @@ for rand in rands:
     fname.append("Data-gen in daphne, sum in np")
 for rand in rands:        
     for i in range(reps):
-        p3 = subprocess.Popen(["python3", "sum_np.py",str(rand)], stdout=subprocess.PIPE)
+        p3 = subprocess.Popen(["python3", "sum_nn.py",str(rand)], stdout=subprocess.PIPE)
         if i == 0:
             continue
         savestr=str(p3.communicate()[0]).split("\\n")
@@ -199,7 +199,7 @@ for rand in rands:
 os.chdir(PROTOTYPE_PATH)
 for rand in rands:
     for i in range(reps):
-        p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_rand_mat_gen.daphne","dim="+str(rand)], stdout=subprocess.PIPE)
+        p3 = subprocess.Popen(["build/bin/daphne","--vec", "add_sum_dd.daphne","dim="+str(rand)], stdout=subprocess.PIPE)
         if i == 0:
             continue
         savestr=str(p3.communicate()[0]).replace("'","").split("\\n")

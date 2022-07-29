@@ -26,32 +26,22 @@ import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
 import numpy as np
-
-r=1000000 # and 1000000 # number of records (rows in X)
-c=5                    # number of centroids (rows in C)
-f=1000                 # number of features (columns in X and C)
-i=20                   # number of iterations
-daphne_context = DaphneContext()
-
-X = daphne_context.getData("mat1_k.csv").compute()
-C = daphne_context.getData("mat2_k.csv").compute()
-
-X.shape = (r, f)
-C.shape = (c, f)
 t = time.time_ns()
-for j in range(0,i):
-    CC = np.power(C,2)
-    CC = np.sum(CC,axis=1, keepdims=True)
-    D = np.add(np.multiply(np.matmul(X, np.transpose(C)),-2.0),np.transpose(CC))
-    minD = np.amin(D, axis=1, keepdims=True)
 
-    P = (D <= minD).astype(int)
-    P = np.divide(P, np.sum(P, axis=1, keepdims=True))
-
-    P_denom = np.sum(P, axis=0, keepdims=True)
-
-    pz = np.matmul(np.transpose(P),X)
-    #np.seterr(invalid="ignore")
-    C = np.divide((pz),np.transpose(P_denom))
-print("res: 0")
+mat1 = sys.argv[1]
+r = int(sys.argv[2]) 
+c = int(sys.argv[3])   
+daphne_context = DaphneContext()
+#XY = daphne_context.rand(r, f, 0.0, 1.0, 1, 1)
+m1 = np.genfromtxt(mat1, delimiter=",")
+XY =  daphne_context.from_numpy_ctypes(m1)
+X = XY['',daphne_context.seq(0,c-2,1)]
+y = XY['',daphne_context.fill(c-1,1,1)]
+X = (X-X.mean(1))/X.stddev(1)
+X = daphne_context.cbind(X, daphne_context.fill(1.0, X.nrow(),1))
+lmbda = daphne_context.fill(0.001, X.ncol(),1)
+A = (X.t() @ X) + lmbda.diagMatrix()
+b = X.t() @ y
+beta = A.solve(b)
+beta.compute()
 print(time.time_ns()-t)

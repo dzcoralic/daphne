@@ -25,7 +25,7 @@ full_time = []
 reps = 15
 for dim in dims:
     for i in range(reps):
-        p1 = subprocess.Popen(["python3", "rand.py", str(dim)], stdout=PIPE)
+        p1 = subprocess.Popen(["python3", "overhead.py", str(dim)], stdout=PIPE)
         savestr=str(p1.communicate()[0]).split("\\n")
         if len(savestr) < 2:
             continue
@@ -39,7 +39,7 @@ for dim in dims:
 os.chdir(PROTOTYPE_PATH)
 for dim in dims:
     for i in range(reps):
-        p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_rand_mat_gen.daphne","dim="+str(dim)], stdout=PIPE)
+        p3 = subprocess.Popen(["build/bin/daphne","--vec", "add_sum_dd.daphne","dim="+str(dim)], stdout=PIPE)
         savestr=str(p3.communicate()[0]).replace("'","").split("\\n")
         tmp_time.append(float(savestr[-1]))
         print("DaphneDSL. Size "+str(dim)+"x"+str(dim)+". Repetition "+str(i)+" of "+str(reps))
