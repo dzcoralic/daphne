@@ -20,7 +20,8 @@ ptime=[]
 dims = [10,10000]
 name = []
 size = []
-tmp_time = []
+tmp_time_1 = []
+tmp_time_2 = []
 full_time = []
 reps = 15
 for dim in dims:
@@ -29,10 +30,9 @@ for dim in dims:
         savestr=str(p1.communicate()[0]).split("\\n")
         if len(savestr) < 2:
             continue
-        tmp_time.append(float(savestr[-2]))
+        tmp_time_1.append(float(savestr[-2]))
         print("DaphneLib. Size "+str(dim)+"x"+str(dim)+". Repetition "+str(i)+" of "+str(reps))
-    full_time.append(statistics.median(tmp_time))
-    tmp_time.clear()
+    full_time.append(tmp_time_1)
     name.append("DaphneLib")
     size.append(str(dim))
     
@@ -41,10 +41,9 @@ for dim in dims:
     for i in range(reps):
         p3 = subprocess.Popen(["build/bin/daphne","--vec", "add_sum_dd.daphne","dim="+str(dim)], stdout=PIPE)
         savestr=str(p3.communicate()[0]).replace("'","").split("\\n")
-        tmp_time.append(float(savestr[-1]))
+        tmp_time_2.append(float(savestr[-1]))
         print("DaphneDSL. Size "+str(dim)+"x"+str(dim)+". Repetition "+str(i)+" of "+str(reps))
-    full_time.append(statistics.median(tmp_time))
-    tmp_time.clear()
+    full_time.append(tmp_time_2)
     name.append("DaphneDSL")
     size.append(str(dim))
 

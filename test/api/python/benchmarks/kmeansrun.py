@@ -8,25 +8,19 @@ from api.python.utils.consts import PROTOTYPE_PATH, TMP_PATH
 import pandas as pd
 import sys 
 
-mat1 = sys.argv[1]
-mat2 = sys.argv[2]
-r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
-f = int(sys.argv[4])                 # number of features (columns in X and C)
-c = int(sys.argv[5])                    # number of centroids (rows in C)
-i = int(sys.argv[6])         # number of iterations
-out = sys.argv[7]
+r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[2])                 # number of features (columns in X and C)
+c = int(sys.argv[3])                    # number of centroids (rows in C)
+i = int(sys.argv[4])         # number of iterations
+out = sys.argv[5]
 reps = 10
 tmp_time = []
 full_time = []
 script = []
 size  = []
-p = subprocess.Popen(["python3", "genData.py",mat1,str(r),str(f)], stdout=subprocess.PIPE)
-p.communicate()
-p = subprocess.Popen(["python3", "genData.py",mat2,str(c),str(f)], stdout=subprocess.PIPE)
-p.communicate()
-sleep(1)
+
 for rep in range(reps):
-    p1 = subprocess.Popen(["python3", "k-meansnp-big.py",mat1,mat2,str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(["python3", "k-meansnp-big.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue
     savestr=str(p1.communicate()[0]).split("\\n")
@@ -41,7 +35,7 @@ script.append("Numpy")
 size.append(str(r)+"x"+str(c))
 for rep in range(reps):
 
-    p2 = subprocess.Popen(["python3", "k-means-big.py",mat1,mat2,str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(["python3", "k-means-big.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue
     savestr=str(p2.communicate()[0]).split("\\n")
@@ -53,7 +47,7 @@ print()
 script.append("DaphneLib")
 size.append(str(r)+"x"+str(c))
 for rep in range(reps):
-    p3 = subprocess.Popen(["python3", "k-means-npd.py",mat1,mat2,str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
+    p3 = subprocess.Popen(["python3", "k-means-npd.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue
     savestr=str(p3.communicate()[0]).split("\\n")
@@ -67,7 +61,6 @@ size.append(str(r)+"x"+str(c))
 os.chdir(PROTOTYPE_PATH)
 for rep in range(reps):
     p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_kmeans_big.daphne",
-    "mat1=\"test/api/python/benchmarks/"+mat1+"\"","mat2=\"test/api/python/benchmarks/"+mat2+"\"",
     "r="+str(r),"f="+str(f),"c="+str(c),"i="+str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue

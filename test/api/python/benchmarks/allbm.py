@@ -20,7 +20,7 @@ print(str(p.communicate()[0]))
 print("Summation addition benchmark done")
 
 print("Starting kmeans benchmark:")
-p = subprocess.Popen(["python3", "kmeansrun.py", "mat1.csv", "mat2.csv", str(10000), str(1000), str(5), str(10), "kmeans1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "kmeansrun.py", "mat1.csv", "mat2.csv", str(100000), str(1000), str(5), str(10), "kmeans1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("K-Means benchmark done")
 
@@ -31,12 +31,12 @@ print(str(p.communicate()[0]))
 print("K-Means 2 benchmark done")
 
 print("Starting lm benchmark:")
-p = subprocess.Popen(["python3", "run_lm.py", "mat1.csv", str(10000), str(1000), "lm1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_lm.py", str(100000), str(1000), "lm1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("LM benchmark done")
 
 print("Starting lm 2 benchmark:")
-p = subprocess.Popen(["python3", "run_lm.py", "mat1.csv", str(100000), str(1000), "lm2.csv"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_lm.py", str(1000000), str(1000), "lm2.csv"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("LM 2 benchmark done")
 if os.path.exists("mat1.csv"):

@@ -10,7 +10,7 @@ from api.python.utils.consts import PROTOTYPE_PATH, TMP_PATH
 import pandas as pd
 import sys 
 size = []
-rands = [10, 1000, 20000]
+rands = [10000, 20000]
 receive_np_tmp = []
 receive_np = []
 time_to_sum = []
@@ -167,7 +167,7 @@ for rand in rands:
     np_gen.append(0)
     size.append(rand)
     fname.append("Data-gen in daphne, sum in np")
-for rand in rands:        
+for rand in rands:          
     for i in range(reps):
         p3 = subprocess.Popen(["python3", "sum_nn.py",str(rand)], stdout=subprocess.PIPE)
         if i == 0:

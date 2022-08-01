@@ -4,9 +4,11 @@
 // - c ... number of columns
 r=$r;
 c=$c;
+mat1=$mat1; 
+
 
 // Data generation.
-XY = rand(r,c,0.0,1.0,1,1);
+XY = readMatrix(mat1);
 // Extraction of X and y.
 t = now();
 
@@ -25,3 +27,5 @@ t_end = now();
 //print(beta);
 print("Time input read:  \n");
 print(as.f32((t_end - t)),0);
+if($verify==true)
+{writeMatrix(beta, "test/api/python/benchmarks/lm_dd_d.csv");}

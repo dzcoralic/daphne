@@ -3,15 +3,17 @@ import numpy as np
 import sys
 
 
-mat1 = sys.argv[1]
-mat2 = sys.argv[2]
-r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
-f = int(sys.argv[4])                 # number of features (columns in X and C)
-c = int(sys.argv[5])                    # number of centroids (rows in C)
-i = int(sys.argv[6])         # number of iterations
+#mat1 = sys.argv[1]
+#mat2 = sys.argv[2]
+r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[2])                 # number of features (columns in X and C)
+c = int(sys.argv[3])                    # number of centroids (rows in C)
+i = int(sys.argv[4])         # number of iterations
 
-X = np.genfromtxt(mat1, delimiter=",")
-C = np.genfromtxt(mat2, delimiter=",")
+X = np.array(np.random.uniform(0.0,1.0, size=[r,f]), dtype=np.double)
+C = np.array(np.random.uniform(0.0,1.0, size=[c,f]), dtype=np.double)
+#X = np.genfromtxt(mat1, delimiter=",")
+#C = np.genfromtxt(mat2, delimiter=",")
 X.shape = (r, f)
 C.shape = (c, f)
 

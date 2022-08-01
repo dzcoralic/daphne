@@ -2,16 +2,17 @@ import time
 import numpy as np
 import sys
 
-r = int(sys.argv[1])
-c = int(sys.argv[2]) 
+mat1 = sys.argv[1]
+r = int(sys.argv[2]) 
+c = int(sys.argv[3])               
 # Data generation.
-#XY = np.genfromtxt(mat1, delimiter=",")
+XY = np.genfromtxt(mat1, delimiter=",")
 
-#XY.shape = (r, c)
+XY.shape = (r, c)
 
-XY = np.array(np.random.uniform(0.0,1.0, size=[r,c]), dtype=np.double)
-XY.shape=(r,c)
 t = time.time_ns()
+#XY = np.array(np.random.randint(100, size=r*c)+1.01, dtype=np.double)
+#XY.shape=(r,c)
 X = XY[:,range(c-1)]
 y = XY[:, [c-1]]
 

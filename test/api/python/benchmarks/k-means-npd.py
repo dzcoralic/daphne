@@ -28,14 +28,17 @@ from api.python.context.daphne_context import DaphneContext
 import sys 
 import numpy as np
 
-mat1 = sys.argv[1]
-mat2 = sys.argv[2]
-r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
-f = int(sys.argv[4])                 # number of features (columns in X and C)
-c = int(sys.argv[5])                    # number of centroids (rows in C)
-i = int(sys.argv[6])         # number of iterationsdaphne_context = DaphneContext()
-m1 = np.genfromtxt(mat1, delimiter=",")
-m2 = np.genfromtxt(mat2, delimiter=",")
+#mat1 = sys.argv[1]
+#mat2 = sys.argv[2]
+r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[2])                 # number of features (columns in X and C)
+c = int(sys.argv[3])                    # number of centroids (rows in C)
+i = int(sys.argv[4])         # number of iterationsdaphne_context = DaphneContext()
+#m1 = np.genfromtxt(mat1, delimiter=",")
+#m2 = np.genfromtxt(mat2, delimiter=",")
+
+m1 = np.array(np.random.uniform(0.0,1.0, size=[r,f]), dtype=np.double)
+m2 = np.array(np.random.uniform(0.0,1.0, size=[c,f]), dtype=np.double)
 m1.shape = (r, f)
 m2.shape = (c, f)
 daphne_context = DaphneContext()

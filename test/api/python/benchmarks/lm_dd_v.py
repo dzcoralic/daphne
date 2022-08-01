@@ -25,14 +25,15 @@
 import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
-import numpy as np
+
 t = time.time_ns()
 
-r = int(sys.argv[1]) 
-c = int(sys.argv[2])   
+mat1 = sys.argv[1]
+r = int(sys.argv[2]) 
+c = int(sys.argv[3])   
 daphne_context = DaphneContext()
-XY = np.array(np.random.uniform(0.0,1.0, size=[r,c]), dtype=np.double)
-XY =  daphne_context.from_numpy_ctypes(XY)
+#XY = daphne_context.rand(r, f, 0.0, 1.0, 1, 1)
+XY =  daphne_context.getData(mat1)
 X = XY['',daphne_context.seq(0,c-2,1)]
 y = XY['',daphne_context.fill(c-1,1,1)]
 X = (X-X.mean(1))/X.stddev(1)

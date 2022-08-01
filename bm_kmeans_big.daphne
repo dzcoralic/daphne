@@ -1,6 +1,6 @@
 // K-means clustering.
-mat1 = $mat1;
-mat2 = $mat2;
+//mat1 = $mat1;
+//mat2 = $mat2;
 r=$r;
 c=$c;
 f=$f;
@@ -12,8 +12,8 @@ i=$i;
 // - i ... number of iterations
 
 // Data generation.
-X = readMatrix(mat1);
-C = readMatrix(mat2);
+X = rand(r,c,0.0,1.0,1,1);
+C = rand(f,c,0.0,1.0,1,1);
 t_start = now();
 // K-means clustering (decisive part).
 for(i in 1:i) {

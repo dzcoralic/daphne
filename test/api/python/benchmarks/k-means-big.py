@@ -26,15 +26,18 @@ import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
 
-mat1 = sys.argv[1]
-mat2 = sys.argv[2]
-r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
-f = int(sys.argv[4])                 # number of features (columns in X and C)
-c = int(sys.argv[5])                    # number of centroids (rows in C)
-i = int(sys.argv[6])         # number of iterations
+#mat1 = sys.argv[1]
+#mat2 = sys.argv[2]
+r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[2])                 # number of features (columns in X and C)
+c = int(sys.argv[3])                    # number of centroids (rows in C)
+i = int(sys.argv[4])         # number of iterations
+
 daphne_context = DaphneContext()
-X = daphne_context.getData(mat1)
-C = daphne_context.getData(mat2)
+X = daphne_context.rand(r,f,0.0,1.0,1,1)
+C = daphne_context.rand(c,f,0.0,1.0,1,1)
+
+#C = daphne_context.getData(mat2)
 t = time.time_ns()
 for j in range(0,i):
     D = (X @ C.t()) * -2.0 + (C * C).sum(0).t() 
