@@ -10,7 +10,7 @@ from api.python.utils.consts import PROTOTYPE_PATH, TMP_PATH
 import pandas as pd
 import sys 
 size = []
-rands = [10000, 20000]
+rands = [100, 200]
 receive_np_tmp = []
 receive_np = []
 time_to_sum = []
@@ -141,7 +141,7 @@ for rand in rands:
     fname.append("Data Transfer via Files, Daphne to Numpy")
 for rand in rands:        
     for i in range(reps):
-        p3 = subprocess.Popen(["python3", "sum_dns.py",str(rand)], stdout=subprocess.PIPE)
+        p3 = subprocess.Popen(["python3", "add_sum_dns.py",str(rand)], stdout=subprocess.PIPE)
         if i == 0:
             continue
         savestr=str(p3.communicate()[0]).split("\\n")
