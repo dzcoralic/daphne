@@ -10,7 +10,7 @@ from api.python.utils.consts import PROTOTYPE_PATH, TMP_PATH
 import pandas as pd
 import sys 
 size = []
-rands = [100, 200]
+rands = [10000, 20000]
 receive_np_tmp = []
 receive_np = []
 time_to_sum = []
