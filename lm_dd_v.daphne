@@ -10,7 +10,6 @@ mat1=$mat1;
 // Data generation.
 XY = readMatrix(mat1);
 // Extraction of X and y.
-t = now();
 
 X = XY[, seq(0, as.si64(c) - 2, 1)];
 y = XY[, fill(as.si64(c) - 1, 1, 1)];
@@ -22,10 +21,4 @@ lambda = fill(0.001, ncol(X), 1);
 A = t(X) @ X + diagMatrix(lambda);
 b = t(X) @ y;
 beta = solve(A, b);
-t_end = now();
-// Result output.
-//print(beta);
-print("Time input read:  \n");
-print(as.f32((t_end - t)),0);
-if($verify==true)
-{writeMatrix(beta, "test/api/python/benchmarks/lm_dd_d.csv");}
+writeMatrix(beta, "test/api/python/benchmarks/lm_dd_d.csv");

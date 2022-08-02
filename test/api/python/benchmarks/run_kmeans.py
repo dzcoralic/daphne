@@ -20,7 +20,7 @@ script = []
 size  = []
 
 for rep in range(reps):
-    p1 = subprocess.Popen(["python3", "k-meansnp-big.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(["python3", "kmeans_nn.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue
     savestr=str(p1.communicate()[0]).split("\\n")
@@ -35,7 +35,7 @@ script.append("Numpy")
 size.append(str(r)+"x"+str(c))
 for rep in range(reps):
 
-    p2 = subprocess.Popen(["python3", "k-means-big.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(["python3", "kmeans_dd.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue
     savestr=str(p2.communicate()[0]).split("\\n")
@@ -47,7 +47,7 @@ print()
 script.append("DaphneLib")
 size.append(str(r)+"x"+str(c))
 for rep in range(reps):
-    p3 = subprocess.Popen(["python3", "k-means-npd.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
+    p3 = subprocess.Popen(["python3", "kmeans_nd.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue
     savestr=str(p3.communicate()[0]).split("\\n")
@@ -60,7 +60,7 @@ script.append("DaphneLib NumPy")
 size.append(str(r)+"x"+str(c))
 os.chdir(PROTOTYPE_PATH)
 for rep in range(reps):
-    p3 = subprocess.Popen(["build/bin/daphne","--vec", "bm_kmeans_big.daphne",
+    p3 = subprocess.Popen(["build/bin/daphne","--vec", "kmeans_dd.daphne",
     "r="+str(r),"f="+str(f),"c="+str(c),"i="+str(i)], stdout=subprocess.PIPE)
     if rep == 0:
         continue

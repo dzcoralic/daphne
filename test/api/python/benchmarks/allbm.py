@@ -20,13 +20,13 @@ print(str(p.communicate()[0]))
 print("Summation addition benchmark done")
 
 print("Starting kmeans benchmark:")
-p = subprocess.Popen(["python3", "kmeansrun.py", str(100000), str(1000), str(5), str(10), "kmeans1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_kmeans.py", str(100000), str(1000), str(5), str(10), "kmeans1.csv"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("K-Means benchmark done")
 
 
 print("Starting kmeans 2 benchmark:")
-p = subprocess.Popen(["python3", "kmeansrun.py", str(1000000), str(1000), str(5), str(10), "kmeans2.csv"], stdout=subprocess.PIPE, universal_newlines=True)
+p = subprocess.Popen(["python3", "run_kmeans.py", str(1000000), str(1000), str(5), str(10), "kmeans2.csv"], stdout=subprocess.PIPE, universal_newlines=True)
 print(str(p.communicate()[0]))
 print("K-Means 2 benchmark done")
 
