@@ -27,17 +27,21 @@ from api.python.context.daphne_context import DaphneContext
 import sys 
 
 mat1 = sys.argv[1]
-r = int(sys.argv[2]) 
-c = int(sys.argv[3])   
+mat2 = sys.argv[2]
+r = int(sys.argv[3]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[4])                 # number of features (columns in X and C)
+c = int(sys.argv[5])                    # number of centroids (rows in C)
+i = int(sys.argv[6])         # number of iterations
+
 daphne_context = DaphneContext()
-#XY = daphne_context.rand(r, f, 0.0, 1.0, 1, 1)
-XY =  daphne_context.getData(mat1)
-X = XY['',daphne_context.seq(0,c-2,1)]
-y = XY['',daphne_context.fill(c-1,1,1)]
-X = (X-X.mean(1))/X.stddev(1)
-X = daphne_context.cbind(X, daphne_context.fill(1.0, X.nrow(),1))
-lmbda = daphne_context.fill(0.001, X.ncol(),1)
-A = (X.t() @ X) + lmbda.diagMatrix()
-b = X.t() @ y
-beta = A.solve(b)
-beta.write("test/api/python/benchmarks/lm_dd.csv").compute()
+X = daphne_context.readMatrix("test/api/python/benchmarks/"+mat1)
+C = daphne_context.readMatrix("test/api/python/benchmarks/"+mat2)
+for j in range(0,i):
+    D = (X @ C.t()) * -2.0 + (C * C).sum(0).t() 
+    minD = D.aggMin(0)
+    P = D <= minD
+    P = P / P.sum(0)
+    P_denom = P.sum(1)
+    C = (P.t() @ X) / P_denom.t()
+
+C.write("test/api/python/benchmarks/kmeans_dd.csv").compute()

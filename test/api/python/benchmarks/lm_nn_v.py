@@ -28,5 +28,4 @@ A = np.transpose(X) @ X + np.diag(lmbda)
 b = np.transpose(X) @ y
 beta = np.linalg.lstsq(A,b,rcond=None)
 #print(beta)
-print("fulltime:")
-print(time.time_ns()-t)
+np.savetxt("lm_nn.csv",beta[0], delimiter=',')
