@@ -26,12 +26,12 @@ import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
 import numpy as np
-t = time.time_ns()
 
 r = int(sys.argv[1]) 
 c = int(sys.argv[2])   
 daphne_context = DaphneContext()
 XY = np.array(np.random.uniform(0.0,1.0, size=[r,c]), dtype=np.double)
+t = time.time_ns()
 XY =  daphne_context.from_numpy_ctypes(XY)
 X = XY['',daphne_context.seq(0,c-2,1)]
 y = XY['',daphne_context.fill(c-1,1,1)]

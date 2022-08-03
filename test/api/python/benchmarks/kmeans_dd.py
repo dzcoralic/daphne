@@ -25,7 +25,7 @@
 import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
-
+t = time.time_ns()
 #mat1 = sys.argv[1]
 #mat2 = sys.argv[2]
 r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
@@ -38,7 +38,7 @@ X = daphne_context.rand(r,f,0.0,1.0,1,1)
 C = daphne_context.rand(c,f,0.0,1.0,1,1)
 
 #C = daphne_context.getData(mat2)
-t = time.time_ns()
+
 for j in range(0,i):
     D = (X @ C.t()) * -2.0 + (C * C).sum(0).t() 
     minD = D.aggMin(0)
