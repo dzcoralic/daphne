@@ -37,8 +37,13 @@ for dim in dims:
             continue
         tmp_time_1.append(float(savestr[-2]))
         print("DaphneLib. Size "+str(dim)+"x"+str(dim)+". Repetition "+str(i+1)+" of "+str(reps))
-    full_time.append(tmp_time_1)
-    e2e_runtime.append(e2e_runtime_1)
+    if dim == dims[0]:
+        full_time.append(tmp_time_1[:reps])
+        e2e_runtime.append(e2e_runtime_1[:reps])
+    else:
+        full_time.append(tmp_time_1[reps:])
+        e2e_runtime.append(e2e_runtime_1[reps:])
+    
     name.append("DaphneLib")
     size.append(str(dim))
     
@@ -51,8 +56,13 @@ for dim in dims:
         e2e_runtime_2.append(time.time_ns() - t)
         tmp_time_2.append(float(savestr[-1]))
         print("DaphneDSL. Size "+str(dim)+"x"+str(dim)+". Repetition "+str(i+1)+" of "+str(reps))
-    full_time.append(tmp_time_2)
-    e2e_runtime.append(e2e_runtime_2)
+    if dim == dims[0]:
+        full_time.append(tmp_time_2[:reps])
+        e2e_runtime.append(e2e_runtime_2[:reps])
+    else:
+        full_time.append(tmp_time_2[reps:])
+        e2e_runtime.append(e2e_runtime_2[reps:])
+        
     name.append("DaphneDSL")
     size.append(str(dim))
 
@@ -63,6 +73,6 @@ lib_overhead = pd.DataFrame({
     "name": name
 })
 
-lib_overhead.to_csv("test/api/python/benchmarks/overhead.csv")
+lib_overhead.to_csv("test/api/python/benchmarks/overhead.csv", index=False)
         
 

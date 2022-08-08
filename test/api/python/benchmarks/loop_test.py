@@ -1,3 +1,6 @@
+from api.python.context.daphne_context import DaphneContext
+
+
 #!/usr/bin/python
 
 # -------------------------------------------------------------
@@ -21,23 +24,39 @@
 #
 # -------------------------------------------------------------
 
-
-import sys
-import numpy as np
 import time
 from api.python.context.daphne_context import DaphneContext
-ftime = time.time_ns()
-dim = int(sys.argv[1])
-t = time.time_ns()
-m1 = np.array(np.random.randint(100, size=dim*dim)+1.01, dtype=np.double)
-print("np gen:")
-print(time.time_ns()-t)
-m1.shape = (dim, dim)
+import sys 
+#mat1 = sys.argv[1]
+#mat2 = sys.argv[2]
+r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
+f = int(sys.argv[2])                 # number of features (columns in X and C)
+c = int(sys.argv[3])                    # number of centroids (rows in C)
+i = int(sys.argv[4])         # number of iterations
+
 daphne_context = DaphneContext()
+X = daphne_context.rand(r,f,0.0,1.0,1,1)
+C = daphne_context.rand(c,f,0.0,1.0,1,1)
+def body():
+    global X
+    global C
+    global i
+    D = (X @ C.t()) * -2.0 + (C * C).sum(0).t() 
+    minD = D.aggMin(0)
+    P = D <= minD
+    P = P / P.sum(0)
+    P_denom = P.sum(1)
+    C = (P.t() @ X) / P_denom.t()
+    i+=1
+    return C
+
 t = time.time_ns()
-m1 = daphne_context.from_numpy(m1)
-(m1+m1).sum().compute()
-print("script running:")
+#C = daphne_context.getData(mat)
+
+
+condition = X < 10
+daphne_context.while_loop(condition, body()).compute()
+
+
 print(time.time_ns()-t)
-print("ftime: ")
-print(time.time_ns()-ftime)
+

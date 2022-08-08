@@ -26,9 +26,11 @@ __all__ = ["DaphneContext"]
 import ctypes
 from api.python.operator.nodes.frame import Frame
 import pandas as pd
+from api.python.script_building.dag import OutputType
 from api.python.utils.consts import F32, F64, SI32, SI64, SI8, UI32, UI64, UI8, VALID_INPUT_TYPES, TMP_PATH
 import numpy as np
 from api.python.operator.nodes.matrix import Matrix
+from api.python.operator.operation_node import OperationNode
 from typing import Sequence, Dict, Union
 
 class DaphneContext(object):
@@ -72,7 +74,11 @@ class DaphneContext(object):
         """
         unnamed_params = ['\"'+file+'\"']
         return Frame(self, 'readMatrix', unnamed_params)
-        
+    
+    def while_loop(self, condition, body):
+        named_input_nodes = {'condition':condition}
+        return OperationNode(self, 'while', named_input_nodes = named_input_nodes, unnamed_input_nodes = [body], output_type=OutputType.NONE)
+
     def from_numpy_ctypes(self, mat: np.array) -> Matrix:
         """Generate DAGNode representing matrix with data given by a numpy array.
         :param mat: the numpy array
@@ -80,7 +86,7 @@ class DaphneContext(object):
         :param kwargs: named parameters
         :return: A Matrix
         """
-        address = mat.ctypes.data_as(np.ctypeslib.ndpointer(dtype=np.double, ndim=1, flags='C_CONTIGUOUS')).value
+        address = mat.ctypes.data_as(np.ctypeslib.ndpointer(dtype=mat.dtype, ndim=1, flags='C_CONTIGUOUS')).value
         upper = (address & 0xFFFFFFFF00000000)>>32;
         lower = (address & 0xFFFFFFFF)
         d_type = mat.dtype

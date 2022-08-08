@@ -35,12 +35,10 @@ print("np gen:")
 print(t_gen)
 m1.shape = (dim, dim)
 daphne_context = DaphneContext()
-t = time.time_ns()
+
 m1 = m1+m1
 m1 = daphne_context.from_numpy_ctypes(m1)
 m1 = m1+m1
 m1.sum().compute()
-print("script running:")
-print(time.time_ns()-t)
 print("ftime:")
 print(time.time_ns()-ftime)

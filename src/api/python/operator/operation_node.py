@@ -92,6 +92,7 @@ class OperationNode(DAGNode):
                 print(time.time_ns() - np_time)
                 self.clear_tmp()
                 return arr
+               
             if result is None:
                 return
             return result
@@ -108,6 +109,8 @@ class OperationNode(DAGNode):
             assert len(unnamed_input_vars)==2, 'Binary operations need exactly two input variables'
             return f'{var_name}={unnamed_input_vars[0]}{self.operation}{unnamed_input_vars[1]};'
         inputs_comma_sep = create_params_string(unnamed_input_vars, named_input_vars).format(file_name=var_name)
+        if self.operation == 'while':
+            return f'while({list(named_input_vars.values())[0]})'+"{"+f'{unnamed_input_vars[0]};'+'};'
         if self.output_type == OutputType.NONE:
             return f'{self.operation}({inputs_comma_sep});'
         else:

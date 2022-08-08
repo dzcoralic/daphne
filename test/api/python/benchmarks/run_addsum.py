@@ -1,14 +1,8 @@
-from asyncio.subprocess import PIPE
-import glob, os
-from re import sub
-import statistics
+import os
 import subprocess
-from time import sleep
 
-from numpy import rad2deg
-from api.python.utils.consts import PROTOTYPE_PATH, TMP_PATH
+from api.python.utils.consts import PROTOTYPE_PATH
 import pandas as pd
-import sys 
 import time
 size = []
 rands = [10000, 20000]
@@ -26,20 +20,6 @@ time_to_sum_3 = []
 time_to_sum_4 = []
 time_to_sum_5 = []
 time_to_sum_6 = []
-np_gen = []
-np_gen_1 = []
-np_gen_2 = []
-np_gen_3 = []
-np_gen_4 = []
-np_gen_5 = []
-np_gen_6 = []
-script_running_1 = []
-script_running_2 = []
-script_running_3 = []
-script_running_4 = []
-script_running_5 = []
-script_running_6 = []
-script_running = []
 ftime_1 = []
 ftime_2 = []
 ftime_3 = []
@@ -106,15 +86,13 @@ for rand in rands:
         e2e_runtime_1.append(time.time_ns()-t)
         if len(savestr) < 2:
             continue
-      #  print(savestr)
+        #print(savestr)
         receive_np_1.append(float(savestr[1]))
         time_to_add_1.append(float(savestr[3]))
         time_to_sum_1.append(float(savestr[5]))
-        np_gen_1.append(float(savestr[8]))
-        script_running_1.append(float(savestr[11]))
-        ftime_1.append(float(savestr[13]))
+        random_data_gen_1.append(float(savestr[8]))
+        ftime_1.append(float(savestr[11]))
         print("Repetition "+str(i+1)+" of "+str(reps))
-    random_data_gen.append(0)
     write.append(0)
     write_np.append(0)
     read.append(0)
@@ -125,20 +103,18 @@ for rand in rands:
     if rand == rands[0]:
 
         e2e_runtime.append(e2e_runtime_1[:reps])
-        np_gen.append(np_gen_1[:reps])
+        random_data_gen.append(random_data_gen_1[:reps])
         receive_np.append(receive_np_1[:reps])
         time_to_add.append(time_to_add_1[:reps])
         time_to_sum.append(time_to_sum_1[:reps])
-        script_running.append(script_running_1[:reps])
         ftime.append(ftime_1[:reps])
    
     if rand == rands[1]:
         e2e_runtime.append(e2e_runtime_1[reps:])
-        np_gen.append(np_gen_1[reps:])
+        random_data_gen.append(random_data_gen_1[reps:])
         receive_np.append(receive_np_1[reps:])
         time_to_add.append(time_to_add_1[reps:])
         time_to_sum.append(time_to_sum_1[reps:])
-        script_running.append(script_running_1[reps:])
         ftime.append(ftime_1[reps:])
     print("Data transfer via ctypes FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     
@@ -146,23 +122,32 @@ for rand in rands:
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
-        p2 = subprocess.Popen(["python3", "add_sum_dnf.py",str(rand)], stdout=subprocess.PIPE)
-        savestr=str(p2.communicate()[0]).split("\\n")
+        if rand == rands[0]:    
+            p2 = subprocess.Popen(["python3", "add_sum_dnf.py",str(rand)], stdout=subprocess.PIPE)
+            savestr=str(p2.communicate()[0]).split("\\n")
         e2e_runtime_2.append(time.time_ns()-t)
    
      #   print(savestr)
-        res_construct_2.append(float(savestr[2]))
-        time_to_add_2.append(float(savestr[4]))
-        time_to_sum_2.append(float(savestr[6]))
-        random_data_gen_2.append(float(savestr[10]))
-        write_2.append(float(savestr[12]))
-        ftime_2.append(float(savestr[8]))
-        print("Repetition "+str(i+1)+" of "+str(reps))
+        if rand == rands[0]:
+            res_construct_2.append(float(savestr[2]))
+            time_to_add_2.append(float(savestr[4]))
+            time_to_sum_2.append(float(savestr[6]))
+            random_data_gen_2.append(float(savestr[10]))
+            write_2.append(float(savestr[12]))
+            ftime_2.append(float(savestr[8]))
+            print("Repetition "+str(i+1)+" of "+str(reps))
+        else:
+            res_construct_2.append(0)
+            time_to_add_2.append(0)
+            time_to_sum_2.append(0)
+            random_data_gen_2.append(0)
+            write_2.append(0)
+            ftime_2.append(0)
+            print("Repetition "+str(i+1)+" of "+str(reps))
+            
     read.append(0)
     receive_np.append(0)
-    np_gen.append(0)
     write_np.append(0)
-    script_running.append(0)
     size.append(rand)    
     fname.append("Data generated in Daphne, Operations in NumPy")
     
@@ -176,32 +161,40 @@ for rand in rands:
         write.append(write_2[:reps])
     
     if rand == rands[1]:
-        e2e_runtime.append(e2e_runtime_2[reps:])
-        res_construct.append(res_construct_2[reps:])
-        time_to_add.append(time_to_add_2[reps:])
-        time_to_sum.append(time_to_sum_2[reps:])
-        random_data_gen.append(random_data_gen_2[reps:])
-        ftime.append(ftime_2[reps:])
-        write.append(write_2[reps:])
+        e2e_runtime.append(0)
+        res_construct.append(0)
+        time_to_add.append(0)
+        time_to_sum.append(0)
+        random_data_gen.append(0)
+        ftime.append(0)
+        write.append(0)
     print("Daphne gen , numpy summation, files transfer FINISHED. Matrix size "+str(rand)+"x"+str(rand))
         
 for rand in rands:        
     for i in range(reps):
         t = time.time_ns()
-        p3 = subprocess.Popen(["python3", "add_sum_ndf.py",str(rand)], stdout=subprocess.PIPE)
-        savestr=str(p3.communicate()[0]).split("\\n")
+        if rand == rands[0]:
+            p3 = subprocess.Popen(["python3", "add_sum_ndf.py",str(rand)], stdout=subprocess.PIPE)
+            savestr=str(p3.communicate()[0]).split("\\n")
+            #print(savestr)
         e2e_runtime_3.append(time.time_ns()-t)
         print("Repetition "+str(i+1)+" of "+str(reps))
-        read_3.append(float(savestr[1]))
-        time_to_add_3.append(float(savestr[3]))
-        time_to_sum_3.append(float(savestr[5]))
-        write_np_3.append(float(savestr[8]))
-        script_running_3.append(float(savestr[11]))
-        ftime_3.append(float(savestr[13]))
+        if rand == rands[0]:
+            read_3.append(float(savestr[1]))
+            time_to_add_3.append(float(savestr[3]))
+            time_to_sum_3.append(float(savestr[5]))
+            write_np_3.append(float(savestr[8]))
+            ftime_3.append(float(savestr[13]))
+        if rand == rands[1]:
+            read_3.append(0)
+            time_to_add_3.append(0)
+            time_to_sum_3.append(0)
+            write_np_3.append(0)
+            ftime_3.append(0)
+        
     res_construct.append(0)
     random_data_gen.append(0)
     receive_np.append(0)
-    np_gen.append(0)
     size.append(rand)
     fname.append("Data Transfer via Files, Daphne to Numpy")
 
@@ -211,18 +204,16 @@ for rand in rands:
         time_to_add.append(time_to_add_3[:reps])
         time_to_sum.append(time_to_sum_3[:reps])
         write_np.append(write_np_3[:reps])
-        script_running.append(script_running_3[:reps])
         ftime.append(ftime_3[:reps])
     print("Data transfer via files FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     
     if rand == rands[1]:
-        e2e_runtime.append(e2e_runtime_3[reps:])
-        read.append(read_3[reps:])
-        time_to_add.append(time_to_add_3[reps:])
-        time_to_sum.append(time_to_sum_3[reps:])
-        write_np.append(write_np_3[reps:])
-        script_running.append(script_running_3[reps:])
-        ftime.append(ftime_3[reps:])
+        e2e_runtime.append(0)
+        read.append(0)
+        time_to_add.append(0)
+        time_to_sum.append(0)
+        write_np.append(0)
+        ftime.append(0)
 
 for rand in rands:        
     for i in range(reps):
@@ -238,10 +229,8 @@ for rand in rands:
         print("Repetition "+str(i+1)+" of "+str(reps))
     read.append(0)
     write_np.append(0)
-    script_running.append(0)
     res_construct.append(0)
     receive_np.append(0)
-    np_gen.append(0)
     print("Data gen in daphne, sum in numpy FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     size.append(rand)
 
@@ -272,14 +261,12 @@ for rand in rands:
         print("Repetition "+str(i+1)+" of "+str(reps))
         time_to_add_5.append(float(savestr[1]))
         time_to_sum_5.append(float(savestr[3]))
-        np_gen_5.append(float(savestr[7]))
+        random_data_gen_5.append(float(savestr[7]))
         ftime_5.append(float(savestr[9]))
     print("Pure Numpy FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     read.append(0)
     write_np.append(0)
-    script_running.append(0)
     res_construct.append(0)
-    random_data_gen.append(0)
     receive_np.append(0)
     fname.append("Pure Numpy")
     size.append(rand)
@@ -289,13 +276,13 @@ for rand in rands:
         time_to_add.append(time_to_add_5[:reps])
         time_to_sum.append(time_to_sum_5[:reps])
         ftime.append(ftime_5[:reps])
-        np_gen.append(np_gen_5[:reps])
+        random_data_gen.append(random_data_gen_5[:reps])
     if rand == rands[1]:
         e2e_runtime.append(e2e_runtime_5[reps:])
         time_to_add.append(time_to_add_5[reps:])
         time_to_sum.append(time_to_sum_5[reps:])
         ftime.append(ftime_5[reps:])
-        np_gen.append(np_gen_5[reps:])
+        random_data_gen.append(random_data_gen_5[reps:])
         
 os.chdir(PROTOTYPE_PATH)
 for rand in rands:
@@ -312,12 +299,10 @@ for rand in rands:
         ftime_6.append(float(savestr[8]))
     print("DaphneDSL FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     receive_np.append(0)
-    np_gen.append(0)
     size.append(rand)
     fname.append("DaphneDSL")
     read.append(0)
     write_np.append(0)
-    script_running.append(0)
     res_construct.append(0)
     if rand == rands[0]:
         e2e_runtime.append(e2e_runtime_6[:reps])
@@ -335,17 +320,15 @@ for rand in rands:
         
 dataset = pd.DataFrame({
     "size":size,
-    "e2e runtime": e2e_runtime,
-    "full time":ftime,
+    "end-to-end": e2e_runtime,
+    "script execution":ftime,
     "name": fname,
-    "reading files":read,
-    "time to add":time_to_add,
-    "time to sum":time_to_sum,
-    "writing numpy arr": write_np,
-    "script running":script_running,
+    "transfer receiver":read,
+    "add":time_to_add,
+    "sum":time_to_sum,
+    "transfer sender": write_np,
     "result construction":res_construct,
-    "random data generation in daphne":random_data_gen,
-    "numpy result recieved":receive_np,
-    "numpy data generation":np_gen})
+    "data generation":random_data_gen,
+    "numpy result recieved":receive_np})
 
-dataset.to_csv("test/api/python/benchmarks/addsum.csv")
+dataset.to_csv("test/api/python/benchmarks/addsum.csv", index=False)

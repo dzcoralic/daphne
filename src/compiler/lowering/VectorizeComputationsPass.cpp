@@ -40,12 +40,13 @@ namespace
         if (auto defOp = value.getDefiningOp()) {
             if (defOp == op)
                 return true;
-#if 0
+#if 1
             // TODO This crashes if defOp and op are not in the same block.
             // At the same time, it does not seem to be strictly required.
-            if (defOp->isBeforeInBlock(op))
+            // if (defOp->isBeforeInBlock(op))
                 // can't have results of `op` as inputs, as it is defined before
-                return false;
+               if(defOp->getBlock() == op->getBlock() && defOp->isBeforeInBlock(op))
+                    return false;
 #endif
             for (auto operand : defOp->getOperands()) {
                 if (valueDependsOnResultOf(operand, op))

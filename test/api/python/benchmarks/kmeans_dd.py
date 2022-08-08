@@ -25,9 +25,10 @@
 import time
 from api.python.context.daphne_context import DaphneContext
 import sys 
-t = time.time_ns()
 #mat1 = sys.argv[1]
 #mat2 = sys.argv[2]
+
+t = time.time_ns()
 r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
 f = int(sys.argv[2])                 # number of features (columns in X and C)
 c = int(sys.argv[3])                    # number of centroids (rows in C)

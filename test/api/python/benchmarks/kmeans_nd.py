@@ -28,6 +28,7 @@ from api.python.context.daphne_context import DaphneContext
 import sys 
 import numpy as np
 
+t = time.time_ns()
 #mat1 = sys.argv[1]
 #mat2 = sys.argv[2]
 r = int(sys.argv[1]) # and 1000000 # number of records (rows in X)
@@ -36,12 +37,13 @@ c = int(sys.argv[3])                    # number of centroids (rows in C)
 i = int(sys.argv[4])         # number of iterationsdaphne_context = DaphneContext()
 #m1 = np.genfromtxt(mat1, delimiter=",")
 #m2 = np.genfromtxt(mat2, delimiter=",")
-
+g = time.time_ns()
 m1 = np.array(np.random.uniform(0.0,1.0, size=[r,f]), dtype=np.double)
 m2 = np.array(np.random.uniform(0.0,1.0, size=[c,f]), dtype=np.double)
+print("Np gen:")
+print(time.time_ns()-g)
 m1.shape = (r, f)
 m2.shape = (c, f)
-t = time.time_ns()
 daphne_context = DaphneContext()
 X = daphne_context.from_numpy_ctypes(m1)
 C = daphne_context.from_numpy_ctypes(m2)

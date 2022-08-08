@@ -2,6 +2,7 @@ import time
 import numpy as np
 import sys
 
+t = time.time_ns()
 r = int(sys.argv[1])
 c = int(sys.argv[2]) 
 # Data generation.
@@ -9,9 +10,11 @@ c = int(sys.argv[2])
 
 #XY.shape = (r, c)
 
+g = time.time_ns()
 XY = np.array(np.random.uniform(0.0,1.0, size=[r,c]), dtype=np.double)
+print("np gen:")
+print(time.time_ns()-g)
 XY.shape=(r,c)
-t = time.time_ns()
 X = XY[:,range(c-1)]
 y = XY[:, [c-1]]
 
