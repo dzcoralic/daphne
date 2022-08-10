@@ -10,11 +10,11 @@ i=$i;
 // - c ... number of centroids
 // - f ... number of features
 // - i ... number of iterations
+t_start = now();
 
 // Data generation.
 X = rand(r,c,0.0,1.0,1,1);
 C = rand(f,c,0.0,1.0,1,1);
-t_start = now();
 // K-means clustering (decisive part).
 for(i in 1:i) {
     D = (X @ t(C)) * -2.0 + t(sum(C ^ 2.0, 0));
