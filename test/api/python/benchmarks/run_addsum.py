@@ -93,7 +93,6 @@ for rand in rands:
         random_data_gen_1.append(float(savestr[8]))
         ftime_1.append(float(savestr[11]))
         print("Repetition "+str(i+1)+" of "+str(reps))
-    write.append(0)
     write_np.append(0)
     read.append(0)
     res_construct.append(0)
@@ -147,7 +146,6 @@ for rand in rands:
             
     read.append(0)
     receive_np.append(0)
-    write_np.append(0)
     size.append(rand)    
     fname.append("Data generated in Daphne, Operations in NumPy")
     
@@ -158,7 +156,7 @@ for rand in rands:
         time_to_sum.append(time_to_sum_2[:reps])
         random_data_gen.append(random_data_gen_2[:reps])
         ftime.append(ftime_2[:reps])
-        write.append(write_2[:reps])
+        write_np.append(write_2[:reps])
     
     if rand == rands[1]:
         e2e_runtime.append(0)
