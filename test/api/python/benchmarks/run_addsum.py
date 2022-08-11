@@ -165,7 +165,7 @@ for rand in rands:
         time_to_sum.append(0)
         random_data_gen.append(0)
         ftime.append(0)
-        write.append(0)
+        write_np.append(0)
     print("Daphne gen , numpy summation, files transfer FINISHED. Matrix size "+str(rand)+"x"+str(rand))
         
 for rand in rands:        
