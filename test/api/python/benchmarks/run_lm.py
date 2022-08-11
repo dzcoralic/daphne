@@ -45,7 +45,7 @@ for rep in range(reps):
     tmp_time_1.append(float(savestr[-2]))
     gen_time_1.append(float(savestr[1]))
 
-gen_time.append(gen_time)
+gen_time.append(gen_time_1)
 if len(tmp_time_1) > 1:
     full_time.append(tmp_time_1)
 else:
@@ -101,7 +101,7 @@ for rep in range(reps):
     tmp_time_4.append(float(savestr[-1])-float(savestr[1]))
     print("Repetition "+str(rep+1)+" of "+str(reps))
     gen_time_4.append(float(savestr[1]))
-gen_time.append(float(savestr[1]))
+gen_time.append(gen_time_4)
 full_time.append(tmp_time_4)
 e2e_runtime.append(e2e_runtime_1)
 e2e_runtime.append(e2e_runtime_2)

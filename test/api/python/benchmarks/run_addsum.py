@@ -34,13 +34,6 @@ time_to_add_4 = []
 time_to_add_5 = []
 time_to_add_6 = []
 time_to_add = []
-res_construct_1 = []
-res_construct_2 = []
-res_construct_3 = []
-res_construct_4 = []
-res_construct_5 = []
-res_construct_6 = []
-res_construct = []
 random_data_gen_1 = []
 random_data_gen_2 = []
 random_data_gen_3 = []
@@ -95,7 +88,6 @@ for rand in rands:
         print("Repetition "+str(i+1)+" of "+str(reps))
     write_np.append(0)
     read.append(0)
-    res_construct.append(0)
     size.append(rand)
     fname.append("Data transfer via ctypes")
     
@@ -128,7 +120,7 @@ for rand in rands:
    
      #   print(savestr)
         if rand == rands[0]:
-            res_construct_2.append(float(savestr[2]))
+            read_2.append(float(savestr[2]))
             time_to_add_2.append(float(savestr[4]))
             time_to_sum_2.append(float(savestr[6]))
             random_data_gen_2.append(float(savestr[10]))
@@ -136,7 +128,7 @@ for rand in rands:
             ftime_2.append(float(savestr[8]))
             print("Repetition "+str(i+1)+" of "+str(reps))
         else:
-            res_construct_2.append(0)
+            read_2.append(0)
             time_to_add_2.append(0)
             time_to_sum_2.append(0)
             random_data_gen_2.append(0)
@@ -144,14 +136,13 @@ for rand in rands:
             ftime_2.append(0)
             print("Repetition "+str(i+1)+" of "+str(reps))
             
-    read.append(0)
     receive_np.append(0)
     size.append(rand)    
     fname.append("Data generated in Daphne, Operations in NumPy")
     
     if rand == rands[0]:
         e2e_runtime.append(e2e_runtime_2[:reps])
-        res_construct.append(res_construct_2[:reps])
+        read.append(read_2[:reps])
         time_to_add.append(time_to_add_2[:reps])
         time_to_sum.append(time_to_sum_2[:reps])
         random_data_gen.append(random_data_gen_2[:reps])
@@ -160,7 +151,7 @@ for rand in rands:
     
     if rand == rands[1]:
         e2e_runtime.append(0)
-        res_construct.append(0)
+        read.append(0)
         time_to_add.append(0)
         time_to_sum.append(0)
         random_data_gen.append(0)
@@ -191,7 +182,6 @@ for rand in rands:
             write_np_3.append(0)
             ftime_3.append(0)
         
-    res_construct.append(0)
     receive_np.append(0)
     size.append(rand)
     fname.append("Data Transfer via Files, Daphne to Numpy")
@@ -221,15 +211,13 @@ for rand in rands:
         p3 = subprocess.Popen(["python3", "add_sum_dns.py",str(rand)], stdout=subprocess.PIPE)
         savestr=str(p3.communicate()[0]).split("\\n")
         e2e_runtime_4.append(time.time_ns()-t)
-        res_construct_4.append(float(savestr[2]))
+        read_4.append(float(savestr[2]))
         time_to_add_4.append(float(savestr[4]))    
         time_to_sum_4.append(float(savestr[6]))
         ftime_4.append(float(savestr[8]))
         random_data_gen_4.append(float(savestr[10]))
         print("Repetition "+str(i+1)+" of "+str(reps))
-    read.append(0)
     write_np.append(0)
-    res_construct.append(0)
     receive_np.append(0)
     print("Data gen in daphne, sum in numpy FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     size.append(rand)
@@ -241,14 +229,14 @@ for rand in rands:
         time_to_sum.append(time_to_sum_4[:reps])
         ftime.append(ftime_4[:reps])
         random_data_gen.append(random_data_gen_4[:reps])
-    
+        read.append(read_4[:reps])
     if rand == rands[1]:
         e2e_runtime.append(e2e_runtime_4[reps:])
         time_to_add.append(time_to_add_4[reps:])
         time_to_sum.append(time_to_sum_4[reps:])
         ftime.append(ftime_4[reps:])
         random_data_gen.append(random_data_gen_4[reps:])
-    
+        read.append(read_4[reps:])
     fname.append("Data-gen in daphne, sum in np")
 
 for rand in rands:          
@@ -266,7 +254,6 @@ for rand in rands:
     print("Pure Numpy FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     read.append(0)
     write_np.append(0)
-    res_construct.append(0)
     receive_np.append(0)
     fname.append("Pure Numpy")
     size.append(rand)
@@ -303,7 +290,6 @@ for rand in rands:
     fname.append("DaphneDSL")
     read.append(0)
     write_np.append(0)
-    res_construct.append(0)
     if rand == rands[0]:
         e2e_runtime.append(e2e_runtime_6[:reps])
         time_to_add.append(time_to_add_6[:reps])
@@ -327,7 +313,6 @@ dataset = pd.DataFrame({
     "add":time_to_add,
     "sum":time_to_sum,
     "transfer sender": write_np,
-    "result construction":res_construct,
     "data generation":random_data_gen,
     "numpy result recieved":receive_np})
 
