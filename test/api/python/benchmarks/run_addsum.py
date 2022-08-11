@@ -181,7 +181,8 @@ for rand in rands:
             read_3.append(float(savestr[1]))
             time_to_add_3.append(float(savestr[3]))
             time_to_sum_3.append(float(savestr[5]))
-            write_np_3.append(float(savestr[8]))
+            random_data_gen_3.append(float(savestr[8]))
+            write_np_3.append(float(savestr[10]))
             ftime_3.append(float(savestr[13]))
         if rand == rands[1]:
             read_3.append(0)
@@ -191,12 +192,12 @@ for rand in rands:
             ftime_3.append(0)
         
     res_construct.append(0)
-    random_data_gen.append(0)
     receive_np.append(0)
     size.append(rand)
     fname.append("Data Transfer via Files, Daphne to Numpy")
 
     if rand == rands[0]:
+        random_data_gen.append(random_data_gen_3[:reps])
         e2e_runtime.append(e2e_runtime_3[:reps])
         read.append(read_3[:reps])
         time_to_add.append(time_to_add_3[:reps])
@@ -212,6 +213,7 @@ for rand in rands:
         time_to_sum.append(0)
         write_np.append(0)
         ftime.append(0)
+        random_data_gen.append(0)
 
 for rand in rands:        
     for i in range(reps):
