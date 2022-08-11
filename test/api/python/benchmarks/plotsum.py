@@ -6,7 +6,7 @@ from ast import literal_eval
 import itertools 
 df = pd.read_csv("addsum.csv",converters={"script execution":literal_eval, "end-to-end":literal_eval,
                                                    "add":literal_eval, "sum":literal_eval, "transfer sender":literal_eval,
-                                                   "data generation":literal_eval, "result construction":literal_eval,"transfer receiver":literal_eval})
+                                                   "data generation":literal_eval, "transfer receiver":literal_eval})
 
 tmp = []
 
@@ -58,12 +58,6 @@ for i in df["transfer receiver"]:
   else:
     tmp_tr.append(0)
 
-tmp_rc = []
-for i in df["result construction"]:  
-  if isinstance(i, list):
-    tmp_rc.append(statistics.median(i))
-  else:
-    tmp_rc.append(0)
 
 df['end-to-end'] = tmp_e2e
 df['script execution'] = tmp
@@ -72,7 +66,6 @@ df['add'] = tmp_add
 df['transfer sender'] = tmp_ts
 df['transfer receiver'] = tmp_tr
 df['data generation'] = tmp_dg
-df['result construction'] = tmp_rc
 
 df = df.replace('Data generated in Daphne, Operations in NumPy','Data generated in Daphne\nOperations in NumPy\nTransfer via files')
 df = df.replace('Data-gen in daphne, sum in np','Data generated in Daphne\nOperations in NumPy\nTransfer via shared mem')
@@ -86,7 +79,7 @@ df['sum'] = df['sum'].div(10**6).round(2)
 df['add'] = df['add'].div(10**6).round(2)
 df['data generation'] = df['data generation'].div(10**6).round(2)
 df['transfer receiver'] = df['transfer receiver'].div(10**6).round(2)
-df['result construction'] = df['result construction'].div(10**6).round(2)
+df['transfer receiver'] = df['transfer receiver'] 
 df['transfer sender'] = df['transfer sender'].div(10**6).round(2)
 m = df['size'].astype(str).str.contains('10000')
 df1 = df[m].reset_index(drop=True)
@@ -109,7 +102,7 @@ for i in range(0,2):
   axes[i].bar(dflist[i]["name"], dflist[i]["data generation"],bottom=dflist[i]["sum"]+dflist[i]["add"], edgecolor='black', hatch='++', facecolor="none", label="Data generation")
   axes[i].bar(dflist[i]["name"], dflist[i]["transfer sender"],bottom=dflist[i]["data generation"]+dflist[i]["sum"]+dflist[i]["add"], edgecolor='black', hatch='--', facecolor="none", label="Transfer sender")
   axes[i].bar(dflist[i]["name"], dflist[i]["transfer receiver"],bottom=dflist[i]["data generation"]+dflist[i]["transfer sender"]+dflist[i]["sum"]+dflist[i]["add"], edgecolor='black', hatch='xx', facecolor="none", label="Transfer Receiver")
-  axes[i].bar(dflist[i]["name"], dflist[i]["result construction"],bottom=dflist[i]["data generation"]+dflist[i]["transfer receiver"]+dflist[i]["transfer sender"]+dflist[i]["sum"]+dflist[i]["add"], edgecolor='black', hatch='*', facecolor="none", label="Result construct")
+  #axes[i].bar(dflist[i]["name"], dflist[i]["result construction"],bottom=dflist[i]["data generation"]+dflist[i]["transfer receiver"]+dflist[i]["transfer sender"]+dflist[i]["sum"]+dflist[i]["add"], edgecolor='black', hatch='*', facecolor="none", label="Result construct")
 
 
 axes[0].set_title("Matrix size - Rows x Cols: 10000x10000")

@@ -98,7 +98,7 @@ for rep in range(reps):
     p3 = subprocess.Popen(["build/bin/daphne","--vec", "lm_dd.daphne","r="+str(r),"c="+str(c)], stdout=PIPE)
     savestr=str(p3.communicate()[0]).replace("'","").split("\\n")    
     e2e_runtime_4.append(time.time_ns()-t)
-    tmp_time_4.append(float(savestr[-1])-float(savestr[1]))
+    tmp_time_4.append(float(savestr[-1]))
     print("Repetition "+str(rep+1)+" of "+str(reps))
     gen_time_4.append(float(savestr[1]))
 gen_time.append(gen_time_4)
