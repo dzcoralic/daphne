@@ -84,7 +84,7 @@ size.append(str(r)+"x"+str(c))
 os.chdir(PROTOTYPE_PATH)
 for rep in range(reps):
     t = time.time_ns()
-    p3 = subprocess.Popen(["build/bin/daphne", "kmeans_dd.daphne",
+    p3 = subprocess.Popen(["build/bin/daphne","--vec", "kmeans_dd.daphne",
     "r="+str(r),"f="+str(f),"c="+str(c),"i="+str(i)], stdout=subprocess.PIPE)
     savestr=str(p3.communicate()[0]).replace("'","").split("\\n")
     e2e_runtime_4.append(time.time_ns()-t)
