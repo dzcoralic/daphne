@@ -13,8 +13,9 @@ i=$i;
 t_start = now();
 
 // Data generation.
-X = rand(r,c,0.0,1.0,1,1);
-C = rand(f,c,0.0,1.0,1,1);
+X = rand(r,f,0.0,1.0,1,1);
+C = rand(c,f,0.0,1.0,1,1);
+t_dg = now();
 // K-means clustering (decisive part).
 for(i in 1:i) {
     D = (X @ t(C)) * -2.0 + t(sum(C ^ 2.0, 0));
@@ -28,4 +29,6 @@ for(i in 1:i) {
 // Result output.
 //print(C);
 t_end = now();
-print("Time input read:  \n",0);print(as.f32((t_end - t_start)),0);
+
+print("Data gen:  \n",0);print(as.f32((t_dg - t_start)),0);
+print("\nTime input read:  \n",0);print(as.f32((t_end - t_start)),0);
