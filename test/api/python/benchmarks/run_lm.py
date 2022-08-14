@@ -51,7 +51,7 @@ if len(tmp_time_1) > 1:
 else:
     full_time.append(0)
 
-script.append("pure_numpy")
+script.append("Pure NumPy")
 size.append(str(r)+"x"+str(c))
 print("Finished!")
 print(".................................")
@@ -71,7 +71,7 @@ if len(tmp_time_2) > 1:
     full_time.append(tmp_time_2)
 else:
     full_time.append(0)
-script.append("np_daphne")
+script.append("NumPy to DAPHNE")
 size.append(str(r)+"x"+str(c))
 print("Finished!")
 print(".................................")
@@ -87,7 +87,7 @@ for rep in range(reps):
 gen_time.append(gen_time_3)
 full_time.append(tmp_time_3)
 
-script.append("daphnelib")
+script.append("DaphneLib")
 size.append(str(r)+"x"+str(c))
 print("Finished!")
 print(".................................")
@@ -107,7 +107,7 @@ e2e_runtime.append(e2e_runtime_1)
 e2e_runtime.append(e2e_runtime_2)
 e2e_runtime.append(e2e_runtime_3)
 e2e_runtime.append(e2e_runtime_4)
-script.append("daphnedsl")
+script.append("Pure DaphneDSL")
 size.append(str(r)+"x"+str(c))
 print("Finished!")
 print(".................................")

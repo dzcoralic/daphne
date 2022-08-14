@@ -48,7 +48,7 @@ gen_time.append(gen_time_1)
 e2e_runtime.append(e2e_runtime_1)
 full_time.append(tmp_time_1)
 print("kmeans_nn.py done")
-script.append("Numpy")
+script.append("Pure NumPy")
 size.append(str(r)+"x"+str(c))
 
 for rep in range(reps):
@@ -63,7 +63,7 @@ gen_time.append(gen_time_2)
 full_time.append(tmp_time_2)
 e2e_runtime.append(e2e_runtime_2)
 print("kmeans_dd.py done")
-script.append("DaphneLib")
+script.append("Pure DaphneLib")
 size.append(str(r)+"x"+str(c))
 
 for rep in range(reps):
@@ -78,7 +78,7 @@ gen_time.append(gen_time_3)
 full_time.append(tmp_time_3)
 e2e_runtime.append(e2e_runtime_3)
 print("kmeans_nd.py done")
-script.append("DaphneLib NumPy")
+script.append("NumPy to DAPHNE")
 size.append(str(r)+"x"+str(c))
 
 os.chdir(PROTOTYPE_PATH)
@@ -95,7 +95,7 @@ gen_time.append(gen_time_4)
 e2e_runtime.append(e2e_runtime_4)
 full_time.append(tmp_time_4)
 print("kmeans_dd.daphne done")
-script.append("DaphneDSL")
+script.append("Pure DaphneDSL")
 size.append(str(r)+"x"+str(c))
 kmns = pd.DataFrame({
     "size":size,
