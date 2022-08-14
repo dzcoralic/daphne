@@ -5,7 +5,7 @@ from api.python.utils.consts import PROTOTYPE_PATH
 import pandas as pd
 import time
 size = []
-rands = [10, 20]
+rands = [10000, 20000]
 receive_np_1 = []
 receive_np_2 = []
 receive_np_3 = []
@@ -70,7 +70,7 @@ e2e_runtime_6 = []
 e2e_runtime = []
 read = []
 fname = []
-reps = 1
+reps = 10
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
