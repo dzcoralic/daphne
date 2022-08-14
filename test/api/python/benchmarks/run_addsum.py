@@ -89,7 +89,7 @@ for rand in rands:
     write_np.append(0)
     read.append(0)
     size.append(rand)
-    fname.append("Data transfer via ctypes")
+    fname.append("NumPy to DAPHNE via shared memory")
     
     if rand == rands[0]:
 
@@ -107,7 +107,7 @@ for rand in rands:
         time_to_add.append(time_to_add_1[reps:])
         time_to_sum.append(time_to_sum_1[reps:])
         ftime.append(ftime_1[reps:])
-    print("Data transfer via ctypes FINISHED. Matrix size "+str(rand)+"x"+str(rand))
+    print("Data transfer via shared memory FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     
 
 for rand in rands:
@@ -138,7 +138,7 @@ for rand in rands:
             
     receive_np.append(0)
     size.append(rand)    
-    fname.append("Data generated in Daphne, Operations in NumPy")
+    fname.append("DAPHNE to NumPy via files")
     
     if rand == rands[0]:
         e2e_runtime.append(e2e_runtime_2[:reps])
@@ -184,7 +184,7 @@ for rand in rands:
         
     receive_np.append(0)
     size.append(rand)
-    fname.append("Data Transfer via Files, Daphne to Numpy")
+    fname.append("NumPy to DAPHNE via files")
 
     if rand == rands[0]:
         random_data_gen.append(random_data_gen_3[:reps])
