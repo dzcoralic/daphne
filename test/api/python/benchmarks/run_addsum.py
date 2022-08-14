@@ -5,7 +5,7 @@ from api.python.utils.consts import PROTOTYPE_PATH
 import pandas as pd
 import time
 size = []
-rands = [10000, 20000]
+rands = [10, 20]
 receive_np_1 = []
 receive_np_2 = []
 receive_np_3 = []
@@ -70,7 +70,7 @@ e2e_runtime_6 = []
 e2e_runtime = []
 read = []
 fname = []
-reps = 10
+reps = 1
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
@@ -237,7 +237,7 @@ for rand in rands:
         ftime.append(ftime_4[reps:])
         random_data_gen.append(random_data_gen_4[reps:])
         read.append(read_4[reps:])
-    fname.append("Data-gen in daphne, sum in np")
+    fname.append("DAPHNE to NumPy via shared memory")
 
 for rand in rands:          
     for i in range(reps):
@@ -255,7 +255,7 @@ for rand in rands:
     read.append(0)
     write_np.append(0)
     receive_np.append(0)
-    fname.append("Pure Numpy")
+    fname.append("Pure NumPy")
     size.append(rand)
     
     if rand == rands[0]:
@@ -271,38 +271,42 @@ for rand in rands:
         ftime.append(ftime_5[reps:])
         random_data_gen.append(random_data_gen_5[reps:])
         
-os.chdir(PROTOTYPE_PATH)
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
-        p3 = subprocess.Popen(["build/bin/daphne","--vec", "add_sum_dd.daphne","dim="+str(rand)], stdout=subprocess.PIPE)
-        savestr=str(p3.communicate()[0]).replace("'","").split("\\n")
-        e2e_runtime_6.append(time.time_ns() - t)
-        #print(savestr)    
-        print("Repetition "+str(i+1)+" of "+str(reps))
-        random_data_gen_6.append(float(savestr[1]))
+        p1 = subprocess.Popen(["python3", "add_sum_dd.py",str(rand)], stdout=subprocess.PIPE)
+        savestr=str(p1.communicate()[0]).split("\\n")
+        print(savestr)
+        e2e_runtime_6.append(time.time_ns()-t)
+        if len(savestr) < 2:
+            continue
         time_to_add_6.append(float(savestr[3]))
         time_to_sum_6.append(float(savestr[5]))
-        ftime_6.append(float(savestr[8]))
-    print("DaphneDSL FINISHED. Matrix size "+str(rand)+"x"+str(rand))
+        random_data_gen_6.append(float(savestr[1]))
+        ftime_6.append(float(savestr[9]))
+        print("Repetition "+str(i+1)+" of "+str(reps))
     receive_np.append(0)
-    size.append(rand)
-    fname.append("DaphneDSL")
-    read.append(0)
     write_np.append(0)
+    read.append(0)
+    size.append(rand)
+    fname.append("Pure DaphneLib")
+    
     if rand == rands[0]:
+
         e2e_runtime.append(e2e_runtime_6[:reps])
+        random_data_gen.append(random_data_gen_6[:reps])
         time_to_add.append(time_to_add_6[:reps])
         time_to_sum.append(time_to_sum_6[:reps])
         ftime.append(ftime_6[:reps])
-        random_data_gen.append(random_data_gen_6[:reps])
-    
+   
     if rand == rands[1]:
         e2e_runtime.append(e2e_runtime_6[reps:])
+        random_data_gen.append(random_data_gen_6[reps:])
         time_to_add.append(time_to_add_6[reps:])
         time_to_sum.append(time_to_sum_6[reps:])
         ftime.append(ftime_6[reps:])
-        random_data_gen.append(random_data_gen_6[reps:])
+    print("Pure DaphneLib finished. Matrix size "+str(rand)+"x"+str(rand))
+    
         
 dataset = pd.DataFrame({
     "size":size,
@@ -316,4 +320,4 @@ dataset = pd.DataFrame({
     "data generation":random_data_gen,
     "numpy result recieved":receive_np})
 
-dataset.to_csv("test/api/python/benchmarks/addsum.csv", index=False)
+dataset.to_csv("addsum.csv", index=False)
