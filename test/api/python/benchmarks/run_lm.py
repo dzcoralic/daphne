@@ -87,7 +87,7 @@ for rep in range(reps):
 gen_time.append(gen_time_3)
 full_time.append(tmp_time_3)
 
-script.append("DaphneLib")
+script.append("Pure DaphneLib")
 size.append(str(r)+"x"+str(c))
 print("Finished!")
 print(".................................")
