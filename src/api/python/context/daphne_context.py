@@ -24,6 +24,7 @@
 __all__ = ["DaphneContext"]
 
 import ctypes
+from multiprocessing import shared_memory
 from api.python.operator.nodes.frame import Frame
 import pandas as pd
 from api.python.script_building.dag import OutputType
@@ -34,23 +35,7 @@ from api.python.operator.operation_node import OperationNode
 from typing import Sequence, Dict, Union
 
 class DaphneContext(object):
-    #TODO: load data from numpy array
-    def from_numpy(self, mat: np.array,
-            *args: Sequence[VALID_INPUT_TYPES],
-            **kwargs: Dict[str, VALID_INPUT_TYPES]) -> Matrix:
-        """Generate DAGNode representing matrix with data given by a numpy array.
-        :param mat: the numpy array
-        :param args: unnamed parameters
-        :param kwargs: named parameters
-        :return: A Matrix
-        """
 
-        unnamed_params = ['"src/api/python/tmp/{file_name}.csv\"']
-
-        unnamed_params.extend(args)
-        named_params = []
-        return Matrix(self, 'readMatrix', unnamed_params, named_params, local_data=mat)
-    
     def getData(self, file) -> Matrix:
    
         
@@ -79,13 +64,21 @@ class DaphneContext(object):
         named_input_nodes = {'condition':condition}
         return OperationNode(self, 'while', named_input_nodes = named_input_nodes, unnamed_input_nodes = [body], output_type=OutputType.NONE)
 
-    def from_numpy_ctypes(self, mat: np.array) -> Matrix:
+    def from_numpy(self, mat: np.array, shared_memory=True) -> Matrix:
         """Generate DAGNode representing matrix with data given by a numpy array.
         :param mat: the numpy array
         :param args: unnamed parameters
         :param kwargs: named parameters
         :return: A Matrix
         """
+        
+        if not shared_memory:
+
+            unnamed_params = ['"src/api/python/tmp/{file_name}.csv\"']
+
+            named_params = []
+            return Matrix(self, 'readMatrix', unnamed_params, named_params, local_data=mat)
+        
         address = mat.ctypes.data_as(np.ctypeslib.ndpointer(dtype=mat.dtype, ndim=1, flags='C_CONTIGUOUS')).value
         upper = (address & 0xFFFFFFFF00000000)>>32;
         lower = (address & 0xFFFFFFFF)

@@ -89,7 +89,7 @@ class Matrix(OperationNode):
     def _is_numpy(self) -> bool:
         return self._np_array is not None
     
-    def compute(self,type="ctypes") -> Union[np.array]:
+    def compute(self,type="shared memory") -> Union[np.array]:
         if self._is_numpy():
             return self._np_array
         else:
@@ -147,10 +147,10 @@ class Matrix(OperationNode):
         return Matrix(self.daphne_context, '@', [self, other])
 
     def __getitem__(self,  pos):
-        i,x = pos
-        if x is not None:
+        if not isinstance(pos,int):
+            i,x = pos
             return Matrix(self.daphne_context,'',[self, i, x], brackets=True)
-        return Matrix(self.daphne_context,'',[self, i], brackets=True)
+        #return Matrix(self.daphne_context,'',[self, pos], brackets=True)
 
     def sum(self, axis: int = None) -> 'OperationNode':
         """Calculate sum of matrix.
