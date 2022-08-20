@@ -60,6 +60,10 @@ void parseScriptArgs(const llvm::cl::list<string>& scriptArgsCli, unordered_map<
 int
 main(int argc, char** argv)
 {
+         struct timespec tv;
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_before = (uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+   
     // ************************************************************************
     // Parse command line arguments
     // ************************************************************************
@@ -341,6 +345,9 @@ main(int argc, char** argv)
         std::cerr << "Execution error: " << e.what() << std::endl;
         return StatusCode::EXECUTION_ERROR;
     }
-
+        clock_gettime(CLOCK_MONOTONIC_RAW,&tv);
+        uint64_t time_after =(uint64_t)(tv.tv_sec)*1000000000+(uint64_t)(tv.tv_nsec);
+        printf("Time to run script:\n%lld\n", (time_after-time_before));
+   
     return StatusCode::SUCCESS;
 }
