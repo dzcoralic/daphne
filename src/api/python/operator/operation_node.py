@@ -64,7 +64,8 @@ class OperationNode(DAGNode):
         self._brackets = brackets
         self._output_type = output_type
         
-    def compute(self, type="ctypes"):
+    def compute(self, type="shared memory"):
+        
         if self._result_var is None:
             self._script = DaphneDSLScript(self.daphne_context)
             result = self._script.build_code(self, type)
@@ -77,12 +78,12 @@ class OperationNode(DAGNode):
                 df.columns=fmd[1+2+int(fmd[1]):]
                 result = df
                 self.clear_tmp()
-            if self._output_type == OutputType.MATRIX and type=="ctypes":  
+            if self._output_type == OutputType.MATRIX and type=="shared memory":  
                 libDaphneShared.getResult.restype = DaphneLibResult
                 daphneLibResult = libDaphneShared.getResult()
                 np_time = time.time_ns()
                 result = np.ctypeslib.as_array(ctypes.cast(daphneLibResult.address, ctypes.POINTER(self.getType(daphneLibResult.vtc))), shape=[daphneLibResult.rows,daphneLibResult.cols]) 
-                print("Result numpy arr construction time, ctypes:")
+                print("Result numpy arr construction time, shared mem:")
                 print(time.time_ns() - np_time)
                 self.clear_tmp()
             if self._output_type == OutputType.MATRIX and type=="files":

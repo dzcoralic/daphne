@@ -5,7 +5,7 @@ from api.python.utils.consts import PROTOTYPE_PATH
 import pandas as pd
 import time
 size = []
-rands = [10000, 20000]
+rands = [1, 2, 100]
 receive_np_1 = []
 receive_np_2 = []
 receive_np_3 = []
@@ -101,12 +101,20 @@ for rand in rands:
         ftime.append(ftime_1[:reps])
    
     if rand == rands[1]:
-        e2e_runtime.append(e2e_runtime_1[reps:])
-        random_data_gen.append(random_data_gen_1[reps:])
-        receive_np.append(receive_np_1[reps:])
-        time_to_add.append(time_to_add_1[reps:])
-        time_to_sum.append(time_to_sum_1[reps:])
-        ftime.append(ftime_1[reps:])
+        e2e_runtime.append(e2e_runtime_1[reps:2*reps])
+        random_data_gen.append(random_data_gen_1[reps:2*reps])
+        receive_np.append(receive_np_1[reps:2*reps])
+        time_to_add.append(time_to_add_1[reps:2*reps])
+        time_to_sum.append(time_to_sum_1[reps:2*reps])
+        ftime.append(ftime_1[reps:2*reps])
+
+    if rand == rands[2]:
+        e2e_runtime.append(e2e_runtime_1[2*reps:])
+        random_data_gen.append(random_data_gen_1[2*reps:])
+        receive_np.append(receive_np_1[2*reps:])
+        time_to_add.append(time_to_add_1[2*reps:])
+        time_to_sum.append(time_to_sum_1[2*reps:])
+        ftime.append(ftime_1[2*reps:])
     print("Data transfer via shared memory FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     
 
@@ -119,7 +127,7 @@ for rand in rands:
         e2e_runtime_2.append(time.time_ns()-t)
    
      #   print(savestr)
-        if rand == rands[0]:
+        if rand == rands[0] or rand == rands[2]:
             read_2.append(float(savestr[2]))
             time_to_add_2.append(float(savestr[4]))
             time_to_sum_2.append(float(savestr[6]))
@@ -127,7 +135,7 @@ for rand in rands:
             write_2.append(float(savestr[12]))
             ftime_2.append(float(savestr[8]))
             print("Repetition "+str(i+1)+" of "+str(reps))
-        else:
+        if rand == rands[1]:
             read_2.append(0)
             time_to_add_2.append(0)
             time_to_sum_2.append(0)
@@ -135,7 +143,7 @@ for rand in rands:
             write_2.append(0)
             ftime_2.append(0)
             print("Repetition "+str(i+1)+" of "+str(reps))
-            
+    
     receive_np.append(0)
     size.append(rand)    
     fname.append("DAPHNE to NumPy via files")
@@ -148,6 +156,15 @@ for rand in rands:
         random_data_gen.append(random_data_gen_2[:reps])
         ftime.append(ftime_2[:reps])
         write_np.append(write_2[:reps])
+    
+    if rand == rands[2]:
+        e2e_runtime.append(e2e_runtime_2[reps+1:])
+        read.append(read_2[reps+1:])
+        time_to_add.append(time_to_add_2[reps+1:])
+        time_to_sum.append(time_to_sum_2[reps+1:])
+        random_data_gen.append(random_data_gen_2[reps+1:])
+        ftime.append(ftime_2[reps+1:])
+        write_np.append(write_2[reps+1:])
     
     if rand == rands[1]:
         e2e_runtime.append(0)
@@ -168,7 +185,7 @@ for rand in rands:
             #print(savestr)
         e2e_runtime_3.append(time.time_ns()-t)
         print("Repetition "+str(i+1)+" of "+str(reps))
-        if rand == rands[0]:
+        if rand == rands[0] or rand == rands[2]:
             read_3.append(float(savestr[1]))
             time_to_add_3.append(float(savestr[3]))
             time_to_sum_3.append(float(savestr[5]))
@@ -196,6 +213,15 @@ for rand in rands:
         ftime.append(ftime_3[:reps])
     print("Data transfer via files FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     
+    if rand == rands[2]:
+        random_data_gen.append(random_data_gen_3[reps+1:])
+        e2e_runtime.append(e2e_runtime_3[reps+1:])
+        read.append(read_3[reps+1:])
+        time_to_add.append(time_to_add_3[reps+1:])
+        time_to_sum.append(time_to_sum_3[reps+1:])
+        write_np.append(write_np_3[reps+1:])
+        ftime.append(ftime_3[reps+1:])
+
     if rand == rands[1]:
         e2e_runtime.append(0)
         read.append(0)
@@ -231,12 +257,20 @@ for rand in rands:
         random_data_gen.append(random_data_gen_4[:reps])
         read.append(read_4[:reps])
     if rand == rands[1]:
-        e2e_runtime.append(e2e_runtime_4[reps:])
-        time_to_add.append(time_to_add_4[reps:])
-        time_to_sum.append(time_to_sum_4[reps:])
-        ftime.append(ftime_4[reps:])
-        random_data_gen.append(random_data_gen_4[reps:])
-        read.append(read_4[reps:])
+        e2e_runtime.append(e2e_runtime_4[reps:reps*2])
+        time_to_add.append(time_to_add_4[reps:reps*2])
+        time_to_sum.append(time_to_sum_4[reps:reps*2])
+        ftime.append(ftime_4[reps:reps*2])
+        random_data_gen.append(random_data_gen_4[reps:reps*2])
+        read.append(read_4[reps:reps*2])
+
+    if rand == rands[2]:
+        e2e_runtime.append(e2e_runtime_4[reps*2:])
+        time_to_add.append(time_to_add_4[reps*2:])
+        time_to_sum.append(time_to_sum_4[reps*2:])
+        ftime.append(ftime_4[reps*2:])
+        random_data_gen.append(random_data_gen_4[reps*2:])
+        read.append(read_4[reps*2:])
     fname.append("DAPHNE to NumPy via shared memory")
 
 for rand in rands:          
@@ -265,18 +299,24 @@ for rand in rands:
         ftime.append(ftime_5[:reps])
         random_data_gen.append(random_data_gen_5[:reps])
     if rand == rands[1]:
-        e2e_runtime.append(e2e_runtime_5[reps:])
-        time_to_add.append(time_to_add_5[reps:])
-        time_to_sum.append(time_to_sum_5[reps:])
-        ftime.append(ftime_5[reps:])
-        random_data_gen.append(random_data_gen_5[reps:])
+        e2e_runtime.append(e2e_runtime_5[reps:reps*2])
+        time_to_add.append(time_to_add_5[reps:reps*2])
+        time_to_sum.append(time_to_sum_5[reps:reps*2])
+        ftime.append(ftime_5[reps:reps*2])
+        random_data_gen.append(random_data_gen_5[reps:reps*2])
+    if rand == rands[2]:
+        e2e_runtime.append(e2e_runtime_5[reps*2:])
+        time_to_add.append(time_to_add_5[reps*2:])
+        time_to_sum.append(time_to_sum_5[reps*2:])
+        ftime.append(ftime_5[reps*2:])
+        random_data_gen.append(random_data_gen_5[reps*2:])
         
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
         p1 = subprocess.Popen(["python3", "add_sum_dd.py",str(rand)], stdout=subprocess.PIPE)
         savestr=str(p1.communicate()[0]).split("\\n")
-        print(savestr)
+        #print(savestr)
         e2e_runtime_6.append(time.time_ns()-t)
         if len(savestr) < 2:
             continue
@@ -300,11 +340,18 @@ for rand in rands:
         ftime.append(ftime_6[:reps])
    
     if rand == rands[1]:
-        e2e_runtime.append(e2e_runtime_6[reps:])
-        random_data_gen.append(random_data_gen_6[reps:])
-        time_to_add.append(time_to_add_6[reps:])
-        time_to_sum.append(time_to_sum_6[reps:])
-        ftime.append(ftime_6[reps:])
+        e2e_runtime.append(e2e_runtime_6[reps:reps*2])
+        random_data_gen.append(random_data_gen_6[reps:reps*2])
+        time_to_add.append(time_to_add_6[reps:reps*2])
+        time_to_sum.append(time_to_sum_6[reps:reps*2])
+        ftime.append(ftime_6[reps:reps*2])
+           
+    if rand == rands[2]:
+        e2e_runtime.append(e2e_runtime_6[reps*2:])
+        random_data_gen.append(random_data_gen_6[reps*2:])
+        time_to_add.append(time_to_add_6[reps*2:])
+        time_to_sum.append(time_to_sum_6[reps*2:])
+        ftime.append(ftime_6[reps*2:])
     print("Pure DaphneLib finished. Matrix size "+str(rand)+"x"+str(rand))
     
         

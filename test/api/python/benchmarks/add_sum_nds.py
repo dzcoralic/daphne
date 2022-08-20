@@ -37,7 +37,7 @@ m1.shape = (dim, dim)
 daphne_context = DaphneContext()
 
 m1 = m1+m1
-m1 = daphne_context.from_numpy_ctypes(m1)
+m1 = daphne_context.from_numpy(m1)
 m1 = m1+m1
 m1.sum().compute()
 print("ftime:")
