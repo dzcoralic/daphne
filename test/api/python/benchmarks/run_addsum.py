@@ -159,7 +159,7 @@ for rand in rands:
     
     if rand == rands[2]:
         e2e_runtime.append(e2e_runtime_2[reps*2:])
-        read.append(read_2[reps+1:])
+        read.append(read_2[reps*2:])
         time_to_add.append(time_to_add_2[reps*2:])
         time_to_sum.append(time_to_sum_2[reps*2:])
         random_data_gen.append(random_data_gen_2[reps*2:])
