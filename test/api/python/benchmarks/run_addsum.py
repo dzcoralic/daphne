@@ -5,7 +5,7 @@ from api.python.utils.consts import PROTOTYPE_PATH
 import pandas as pd
 import time
 size = []
-rands = [1, 2, 100]
+rands = [10000, 20000, 100]
 receive_np_1 = []
 receive_np_2 = []
 receive_np_3 = []
@@ -121,7 +121,7 @@ for rand in rands:
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
-        if rand == rands[0]:    
+        if rand != rands[1]:    
             p2 = subprocess.Popen(["python3", "add_sum_dnf.py",str(rand)], stdout=subprocess.PIPE)
             savestr=str(p2.communicate()[0]).split("\\n")
         e2e_runtime_2.append(time.time_ns()-t)
@@ -158,28 +158,28 @@ for rand in rands:
         write_np.append(write_2[:reps])
     
     if rand == rands[2]:
-        e2e_runtime.append(e2e_runtime_2[reps+1:])
+        e2e_runtime.append(e2e_runtime_2[reps*2:])
         read.append(read_2[reps+1:])
-        time_to_add.append(time_to_add_2[reps+1:])
-        time_to_sum.append(time_to_sum_2[reps+1:])
-        random_data_gen.append(random_data_gen_2[reps+1:])
-        ftime.append(ftime_2[reps+1:])
-        write_np.append(write_2[reps+1:])
+        time_to_add.append(time_to_add_2[reps*2:])
+        time_to_sum.append(time_to_sum_2[reps*2:])
+        random_data_gen.append(random_data_gen_2[reps*2:])
+        ftime.append(ftime_2[reps*2:])
+        write_np.append(write_2[reps*2:])
     
     if rand == rands[1]:
-        e2e_runtime.append(0)
-        read.append(0)
-        time_to_add.append(0)
-        time_to_sum.append(0)
-        random_data_gen.append(0)
-        ftime.append(0)
-        write_np.append(0)
+        e2e_runtime.append(e2e_runtime_2[reps:reps*2])
+        read.append(read_2[reps:reps*2])
+        time_to_add.append(time_to_add_2[reps:reps*2])
+        time_to_sum.append(time_to_sum_2[reps:reps*2])
+        random_data_gen.append(random_data_gen_2[reps:reps*2])
+        ftime.append(ftime_2[reps:reps*2])
+        write_np.append(write_np_2[reps:reps*2])
     print("Daphne gen , numpy summation, files transfer FINISHED. Matrix size "+str(rand)+"x"+str(rand))
         
 for rand in rands:        
     for i in range(reps):
         t = time.time_ns()
-        if rand == rands[0]:
+        if rand != rands[1]:
             p3 = subprocess.Popen(["python3", "add_sum_ndf.py",str(rand)], stdout=subprocess.PIPE)
             savestr=str(p3.communicate()[0]).split("\\n")
             #print(savestr)
@@ -214,22 +214,22 @@ for rand in rands:
     print("Data transfer via files FINISHED. Matrix size "+str(rand)+"x"+str(rand))
     
     if rand == rands[2]:
-        random_data_gen.append(random_data_gen_3[reps+1:])
-        e2e_runtime.append(e2e_runtime_3[reps+1:])
-        read.append(read_3[reps+1:])
-        time_to_add.append(time_to_add_3[reps+1:])
-        time_to_sum.append(time_to_sum_3[reps+1:])
-        write_np.append(write_np_3[reps+1:])
-        ftime.append(ftime_3[reps+1:])
+        random_data_gen.append(random_data_gen_3[reps*2:])
+        e2e_runtime.append(e2e_runtime_3[reps*2:])
+        read.append(read_3[reps*2:])
+        time_to_add.append(time_to_add_3[reps*2:])
+        time_to_sum.append(time_to_sum_3[reps*2:])
+        write_np.append(write_np_3[reps*2:])
+        ftime.append(ftime_3[reps*2:])
 
     if rand == rands[1]:
-        e2e_runtime.append(0)
-        read.append(0)
-        time_to_add.append(0)
-        time_to_sum.append(0)
-        write_np.append(0)
-        ftime.append(0)
-        random_data_gen.append(0)
+        e2e_runtime.append(e2e_runtime_3[reps:reps*2])
+        read.append(read_3[reps:reps*2])
+        time_to_add.append(time_to_add_3[reps:reps*2])
+        time_to_sum.append(time_to_sum_3[reps:reps*2])
+        write_np.append(write_np_3[reps:reps*2])
+        ftime.append(ftime_3[reps:reps*2])
+        random_data_gen.append(random_data_gen_3[reps:reps*2])
 
 for rand in rands:        
     for i in range(reps):
