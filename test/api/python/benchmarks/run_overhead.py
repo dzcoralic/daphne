@@ -11,6 +11,7 @@ import pandas as pd
 import time
 from datetime import datetime
 from timeit import timeit
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 x = []
 y = []
 z=[]
@@ -73,7 +74,7 @@ lib_overhead = pd.DataFrame({
     "time":full_time,
     "name": name
 })
-
+os.environ['OPENBLAS_NUM_THREADS'] = '32'
 lib_overhead.to_csv("test/api/python/benchmarks/overhead.csv", index=False)
         
 

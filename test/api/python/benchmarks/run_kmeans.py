@@ -80,7 +80,7 @@ e2e_runtime.append(e2e_runtime_3)
 print("kmeans_nd.py done")
 script.append("NumPy to DAPHNE")
 size.append(str(r)+"x"+str(c))
-
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 os.chdir(PROTOTYPE_PATH)
 for rep in range(reps):
     t = time.time_ns()
@@ -96,6 +96,7 @@ e2e_runtime.append(e2e_runtime_4)
 full_time.append(tmp_time_4)
 print("kmeans_dd.daphne done")
 script.append("Pure DaphneDSL")
+os.environ['OPENBLAS_NUM_THREADS'] = '32'
 size.append(str(r)+"x"+str(c))
 kmns = pd.DataFrame({
     "size":size,

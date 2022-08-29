@@ -54,6 +54,7 @@ else:
 script.append("Pure NumPy")
 size.append(str(r)+"x"+str(c))
 
+
 print("Finished!")
 print(".................................")
 print("Starting NumPy + Daphne implementation")
@@ -94,6 +95,7 @@ print("Finished!")
 print(".................................")
 print("Starting pure DaphneDSL implementation")
 os.chdir(PROTOTYPE_PATH)
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 for rep in range(reps):
     t = time.time_ns()
     p3 = subprocess.Popen(["build/bin/daphne","--vec", "lm_dd.daphne","r="+str(r),"c="+str(c)], stdout=PIPE)
@@ -110,6 +112,7 @@ e2e_runtime.append(e2e_runtime_3)
 e2e_runtime.append(e2e_runtime_4)
 script.append("Pure DaphneDSL")
 size.append(str(r)+"x"+str(c))
+os.environ['OPENBLAS_NUM_THREADS'] = '32'
 print("Finished!")
 print(".................................")
 lm = pd.DataFrame({
