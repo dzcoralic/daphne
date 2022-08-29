@@ -33,6 +33,7 @@ full_time = []
 script = []
 size  = []
 
+os.environ['OPENBLAS_NUM_THREADS'] = '32'
 for rep in range(reps):
     t = time.time_ns()
     p1 = subprocess.Popen(["python3", "kmeans_nn.py",str(r),str(f),str(c),str(i)], stdout=subprocess.PIPE)
@@ -45,6 +46,7 @@ for rep in range(reps):
     gen_time_1.append(float(savestr[1]))
 gen_time.append(gen_time_1)
 
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 e2e_runtime.append(e2e_runtime_1)
 full_time.append(tmp_time_1)
 print("kmeans_nn.py done")

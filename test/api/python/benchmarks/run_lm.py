@@ -13,6 +13,7 @@ r = int(sys.argv[1])
 c = int(sys.argv[2])
 out = sys.argv[3]
 
+os.environ['OPENBLAS_NUM_THREADS'] = '32'
 reps = 10
 tmp_time_1 = []
 tmp_time_2 = []
@@ -53,6 +54,8 @@ else:
 
 script.append("Pure NumPy")
 size.append(str(r)+"x"+str(c))
+
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 print("Finished!")
 print(".................................")
 print("Starting NumPy + Daphne implementation")

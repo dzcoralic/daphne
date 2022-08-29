@@ -71,6 +71,7 @@ e2e_runtime = []
 read = []
 fname = []
 reps = 10
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
@@ -273,6 +274,7 @@ for rand in rands:
         read.append(read_4[reps*2:])
     fname.append("DAPHNE to NumPy via shared memory")
 
+os.environ['OPENBLAS_NUM_THREADS'] = '32'
 for rand in rands:          
     for i in range(reps):
         t = time.time_ns()
@@ -310,7 +312,8 @@ for rand in rands:
         time_to_sum.append(time_to_sum_5[reps*2:])
         ftime.append(ftime_5[reps*2:])
         random_data_gen.append(random_data_gen_5[reps*2:])
-        
+
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 for rand in rands:
     for i in range(reps):
         t = time.time_ns()
