@@ -36,7 +36,7 @@ XY = np.array(np.random.uniform(0.0,1.0, size=[r,c]), dtype=np.double)
 print("np gen:")
 print(time.time_ns()-g)
 
-XY =  daphne_context.from_numpy_ctypes(XY)
+XY =  daphne_context.from_numpy(XY)
 X = XY['',daphne_context.seq(0,c-2,1)]
 y = XY['',daphne_context.fill(c-1,1,1)]
 X = (X-X.mean(1))/X.stddev(1)

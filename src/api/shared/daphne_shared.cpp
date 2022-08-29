@@ -69,8 +69,8 @@ extern "C" int
 doMain(char* script_path)
 {
   
-    char * argv[] = {"daphne","--vec",script_path};
-    int argc = 3;
+    char * argv[] = {"daphne","--num-threads=32","--vec",script_path};
+    int argc = 4;
     // ************************************************************************
     // Parse command line arguments
     // ************************************************************************
@@ -109,6 +109,13 @@ doMain(char* script_path)
     opt<bool> cuda(
             "cuda", cat(daphneOptions),
             desc("Use CUDA")
+    );
+    opt<int> numberOfThreads(
+            "num-threads", cat(daphneOptions),
+            desc(
+                "Define the number of the CPU threads used by the vectorized execution engine "
+                "(default is equal to the number of physcial cores on the target node that executes the code)"
+            )
     );
     opt<string> libDir(
             "libdir", cat(daphneOptions),
@@ -157,6 +164,7 @@ doMain(char* script_path)
     user_config.libdir = libDir;
     user_config.library_paths.push_back(user_config.libdir + "/libAllKernels.so");
     user_config.result_struct = &daphne_lib_res;
+    user_config.numberOfThreads = numberOfThreads;
     if(cuda) {
         int device_count = 0;
 #ifdef USE_CUDA

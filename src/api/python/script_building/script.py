@@ -80,7 +80,10 @@ class DaphneDSLScript:
         temp_out_file = open("tmpdaphne.daphne", "w")
         temp_out_file.writelines(self.daphnedsl_script)
         temp_out_file.close()
+        
+        os.environ['OPENBLAS_NUM_THREADS'] = '1'
         res = libDaphneShared.doMain(ctypes.c_char_p(b"tmpdaphne.daphne"))
+        os.environ['OPENBLAS_NUM_THREADS'] = '32'
         print("res: {}".format(res))
 
     def _dfs_dag_nodes(self, dag_node: VALID_INPUT_TYPES)->str:
